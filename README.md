@@ -63,7 +63,25 @@ Una mirada rápida a la organización del código:
 ```
 musicaApp/
 ├── app/                  # 📦 Lógica del backend y scripts PHP
+│   ├── api/              # ⚡ Endpoints RESTful (ej. products.php, orders.php)
+│   ├── config/           # ⚙️ Archivos de configuración (ej. database.php)
+│   ├── core/             # 🧠 Clases y funciones base del backend
+│   ├── models/           # 🧩 Modelos de datos (si aplica, ej. User.php, Product.php)
+│   └── utils/            # 🛠 Funciones de utilidad para el backend
 ├── client/               # ⚛️ Código fuente del frontend (React + Vite)
+│   ├── public/           # 🌐 Archivos públicos (favicon, etc.)
+│   └── src/              # 🚀 Código fuente principal de React
+│       ├── assets/       # 🖼️ Imágenes, iconos, fuentes
+│       ├── components/   # 🧱 Componentes reutilizables (Button, Modal, Card)
+│       ├── context/      # 🛒 Contextos de React (ej. CartContext, AuthContext)
+│       ├── hooks/        # 🎣 Hooks personalizados de React
+│       ├── pages/        # 📄 Páginas principales de la aplicación (Home, Products, Checkout)
+│       ├── services/     # 📡 Lógica para llamadas a la API
+│       ├── styles/       # 🎨 Estilos globales o variables CSS
+│       └── utils/        # 💡 Funciones de utilidad para el frontend
+├── .env                  # 🔑 Variables de entorno
+├── .gitignore            # 🚫 Archivos y carpetas a ignorar por Git
+├── package.json          # 📦 Definiciones de scripts y dependencias de Node.js (frontend)
 ├── README.md             # 📄 Este archivo
 └── LICENSE               # 📜 Información de la licencia
 ```
@@ -73,7 +91,7 @@ musicaApp/
 - `client/src/components/`: Componentes de UI (Header, Footer, CardProduct, CartSidebar, etc.).
 - `client/src/context/`: Contextos de React para el carrito y notificaciones.
 - `client/src/pages/`: Vistas principales (Home, Productos, Checkout, Contacto, Nosotros).
-- `app/`: Tu zona de desarrollo para endpoints y scripts PHP del backend.
+- `app/`: La zona de desarrollo para endpoints y scripts PHP del backend.
 
 ---
 
@@ -126,16 +144,6 @@ fetch(`${base}/app/api/devs.php`)
 
 ---
 
-## 🖼️ Hazlo Más "Cool" (Ideas Rápidas)
-
-¿Quieres llevar este README al siguiente nivel visualmente?
-
-- **Capturas de Pantalla:** Añade imágenes de la UI en acción. Puedes subirlas a `client/public/imgs/` y enlazarlas aquí.
-- **GIFs Animados:** Muestra el flujo del carrito o alguna característica clave con un GIF corto.
-- **Badges Dinámicos:** Integra badges que muestren el estado de los issues, la última versión, etc.
-
----
-
 ## 🤝 Cómo Contribuir
 
 ¡Tu ayuda es invaluable! Si quieres mejorar Music Shop, sigue estos pasos:
@@ -146,13 +154,6 @@ fetch(`${base}/app/api/devs.php`)
 4.  Abre un **Pull Request** detallado hacia la rama `main`, explicando tus cambios y por qué son necesarios.
 
 > **Sugerencia:** Si te interesa, puedo añadir plantillas para PRs/Issues y un archivo `CONTRIBUTING.md` para guiar mejor las contribuciones.
-
-### ✅ Checklist Antes del PR (Recomendado)
-
-- [ ] Ejecuta `npm run dev` y verifica que la UI funcione correctamente.
-- [ ] Prueba los endpoints que hayas modificado con `curl` o Postman.
-- [ ] Si tus cambios afectan la UI, ¡añade capturas de pantalla a tu PR!
-- [ ] Describe claramente el cambio y su propósito en la descripción del Pull Request.
 
 ---
 
@@ -168,20 +169,3 @@ Este proyecto está liberado bajo la **Licencia MIT**. Puedes encontrar los deta
 
 - Abre un [Issue](https://github.com/your-username/music-shop/issues) en este repositorio.
 - Contacta al mantenedor a través de su perfil de GitHub (¡siempre abierto a una buena conversación!).
-
----
-
-## Tabla de Contenido
-
-- [🎯 Visión General](#-visión-general)
-- [🚀 ¡Arranca Rápido! (Desarrollo)](#-arranca-rápido-desarrollo)
-- [✨ Características Destacadas](#-características-destacadas)
-- [🛠 Stack Tecnológico](#-stack-tecnológico)
-- [📁 Estructura del Proyecto](#-estructura-del-proyecto)
-- [🌐 API Endpoints](#-api-endpoints)
-- [💡 Contexto Técnico Avanzado](#-contexto-técnico-avanzado)
-- [📊 Estado del Proyecto](#-estado-del-proyecto)
-- [🖼️ Hazlo Más "Cool" (Ideas Rápidas)](#️-hazlo-más-cool-ideas-rápidas)
-- [🤝 Cómo Contribuir](#-cómo-contribuir)
-- [📝 Licencia](#-licencia)
-- [📬 Contacto](#-contacto)
