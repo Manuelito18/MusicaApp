@@ -1,16 +1,5 @@
 <?php
 
-// Configuración de CORS
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-  http_response_code(200);
-  exit();
-}
-
 // Autoloader simple
 spl_autoload_register(function ($class) {
   $prefix = 'App\\';
@@ -28,6 +17,36 @@ spl_autoload_register(function ($class) {
     require $file;
   }
 });
+
+// Cargar variables de entorno
+use App\Config\Env;
+
+try {
+  Env::load(__DIR__ . '/.env');
+} catch (\RuntimeException $e) {
+  // Si no existe el .env, continuar con valores por defecto
+  error_log("Warning: " . $e->getMessage());
+}
+
+// Configuración de CORS desde variables de entorno
+$allowedOrigins = Env::get('CORS_ALLOWED_ORIGINS', '*');
+$originsArray = $allowedOrigins === '*' ? ['*'] : explode(',', $allowedOrigins);
+
+// Si el origen de la petición está en la lista permitida, usarlo
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+if (in_array('*', $originsArray) || in_array($origin, $originsArray)) {
+  header("Access-Control-Allow-Origin: " . ($origin ?: '*'));
+}
+
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(200);
+  exit();
+}
+
 
 use App\Controllers\ProductoController;
 

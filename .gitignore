@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Archivos de configuración
+.env
+.env.local
+.env.*.local
+
+# Archivos de despliegue
+.Dockerfile
+.dockerignore
