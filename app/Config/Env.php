@@ -19,8 +19,9 @@ class Env
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
     foreach ($lines as $line) {
-      // Ignorar comentarios
-      if (strpos(trim($line), '#') === 0) {
+      // Ignorar comentarios (líneas que empiezan con #)
+      $trimmedLine = trim($line);
+      if (empty($trimmedLine) || strpos($trimmedLine, '#') === 0) {
         continue;
       }
 
@@ -31,11 +32,25 @@ class Env
         $name = trim($name);
         $value = trim($value);
 
+        // Remover comentarios inline (después del valor)
+        // Buscar # que no esté dentro de comillas
+        $commentPos = strpos($value, '#');
+        if ($commentPos !== false) {
+          // Verificar si el # está dentro de comillas
+          $beforeComment = substr($value, 0, $commentPos);
+          $quoteCount = substr_count($beforeComment, '"') + substr_count($beforeComment, "'");
+
+          // Si hay un número par de comillas antes del #, entonces el # es un comentario
+          if ($quoteCount % 2 === 0) {
+            $value = trim(substr($value, 0, $commentPos));
+          }
+        }
+
         // Remover comillas si existen
         $value = self::removeQuotes($value);
 
-        // Establecer la variable de entorno
-        if (!array_key_exists($name, $_ENV)) {
+        // Establecer la variable de entorno solo si el nombre no está vacío
+        if (!empty($name) && !array_key_exists($name, $_ENV)) {
           putenv("{$name}={$value}");
           $_ENV[$name] = $value;
           $_SERVER[$name] = $value;
