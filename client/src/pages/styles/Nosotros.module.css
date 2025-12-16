@@ -1,0 +1,136 @@
+.container {
+  background-color: #000000;
+  padding: 0;
+  color: #f0f0f0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  display: grid;
+    max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.section {
+  padding: 2rem;
+}
+
+.history {
+  padding: 3rem; 
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  transition: all 0.3s ease-in-out;
+  margin: 0 auto;
+}
+
+.historyText {
+  max-width: 550px;
+  flex: 1 1 45%;
+  min-width: 300px;
+}
+
+.historyText h2 {
+  font-size: 2.8rem;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-align: right;
+}
+
+.historyText p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #d0d0d0;
+  text-align: justify;
+}
+
+.historyImage {
+  flex: 1 1 40%;
+  min-width: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.historyImage img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0;
+  box-shadow: none;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.3s ease-in-out;
+}
+
+.historyImage img:hover {
+  transform: scale(1.03);
+}
+
+.team {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #f5f5f5;
+}
+
+.team h2 {
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+.teamUser {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.teamUser > * {
+  flex: 1 1 260px;
+  max-width: 100%;
+}
+
+.numbers {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #f5f5f5;
+}
+
+.numbers h2 {
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+.dats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+
+@media (max-width: 768px) {
+
+  .historyText {
+  flex: 1 1 100%;
+  min-width: 0;
+  max-width: 100%;
+  }
+
+  .historyText h2 {
+  text-align: center;
+  }
+
+  .historyImage {
+  flex: 1 1 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 1rem 0;
+  }
+}

@@ -1,0 +1,68 @@
+.checkoutContainer {
+  background: #121212;
+  min-height: 100vh;
+  padding: 2rem;
+  color: #eee;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.summaryWrap {
+  position: sticky;
+  top: 2rem;
+  align-self: start;
+}
+
+.formWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.addressWrap {
+  background: #1e1e1e;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.addressWrap h3 {
+  margin: 0 0 0.5rem;
+  color: #f59e0b;
+  font-size: 1.2rem;
+}
+
+.addressInput {
+  width: 100%;
+  min-height: 100px;
+  max-height: 150px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  padding: 0.75rem;
+  background: #111;
+  color: #fff;
+  font-size: 1rem;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .summaryWrap {
+    position: static;
+  }
+
+  .addressInput {
+    min-height: 80px;
+    max-height: 120px;
+  }
+}

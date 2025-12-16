@@ -1,0 +1,15 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #000000;
+  color: #e2e8f0;
+}
+
+.main {
+  flex: 1;
+  /*   padding: 2rem;
+  padding-top: 90px; */
+  background-color: black;
+  /* background-color: #111827; */
+}

@@ -1,0 +1,229 @@
+/* HeroSlider.module.css */
+.hero {
+  position: relative;
+  height: 70vh;
+  overflow: hidden;
+  padding: 0 0;
+}
+
+.slider {
+  position: relative;
+  height: 100%;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  pointer-events: none; /* 👈 Previene que el slide bloquee clics */
+  z-index: 0;
+}
+
+.active {
+  opacity: 1;
+  pointer-events: auto; /* 👈 Permite interacción con el slide activo */
+  z-index: 1;
+}
+
+.slideContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+}
+
+.heroText {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.heroSubtitle {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  color: #f59e0b;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.heroDescription {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.heroButtons {
+  display: inline-flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.75rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.btnPrimary {
+  background-color: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.btnPrimary:hover {
+  background-color: #fbbf24;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+  transform: translateY(-2px);
+}
+
+.btnOutline {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.btnOutline:hover {
+  background-color: #ffffff;
+  color: #1f2937;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+.sliderControls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 10; /* 👈 Asegura que estén por encima de los slides */
+  pointer-events: none;
+}
+.sliderBtn {
+  pointer-events: all;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 11;
+  position: relative;
+}
+
+.sliderBtn::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #facc15);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.sliderBtn:hover::before {
+  opacity: 1;
+  filter: blur(6px);
+}
+
+.sliderBtn:hover {
+  transform: scale(1.05);
+  background: rgba(0, 0, 0, 0.7);
+  border-color: #f59e0b;
+}
+
+.sliderBtn img {
+  filter: brightness(0) invert(1);
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.sliderBtn:hover img {
+  transform: scale(1.15);
+}
+
+.sliderBtn img {
+  filter: brightness(0) invert(1);
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.sliderDots {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.dot:hover {
+  transform: scale(1.2);
+}
+
+.dot.active {
+  background: #f59e0b;
+}
+
+@media (max-width: 768px) {
+  .sliderControls {
+    padding: 0 1rem;
+  }
+  .sliderBtn {
+    width: 3rem;
+    height: 3rem;
+  }
+  .btn {
+    font-size: 0.9rem;
+  }
+}

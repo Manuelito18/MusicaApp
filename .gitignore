@@ -32,3 +32,10 @@ dist-ssr
 # Archivos de despliegue
 .Dockerfile
 .dockerignore
+
+# Archivos de Scraping
+scraping/*
+
+# Archivos de las pruebas
+ejecutar_pruebas.php
+pruebas.sql

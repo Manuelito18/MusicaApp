@@ -1,0 +1,33 @@
+.success {
+  background-color: #121212;
+  color: #eee;
+  padding: 3rem 2rem;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.success h2 {
+  color: #f59e0b;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.success p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.success a {
+  background-color: #f59e0b;
+  color: #000;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.success a:hover {
+  background-color: #f97316;
+}

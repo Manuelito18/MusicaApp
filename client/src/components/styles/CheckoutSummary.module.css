@@ -1,0 +1,32 @@
+.summary {
+  background: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: #eee;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  margin-bottom: 2rem;
+}
+
+.summary h2 {
+  color: #f59e0b;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.summary ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.summary li {
+  border-bottom: 1px solid #333;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.summary p {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #f59e0b;
+}
