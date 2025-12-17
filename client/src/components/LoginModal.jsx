@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./styles/LoginModal.module.css";
 import { useUser } from "../context/UserContext";
 
@@ -7,6 +7,19 @@ export default function LoginModal({ isOpen, onClose }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  // 🔒 Bloquear scroll del body cuando el modal está abierto
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -27,7 +40,9 @@ export default function LoginModal({ isOpen, onClose }) {
         <button className={styles.closeBtn} onClick={onClose}>
           ×
         </button>
-        <h3 className={styles.title}>Iniciar sesión</h3>
+
+        <h3 className={styles.title}>Acceso al sistema</h3>
+
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label}>
             Usuario
@@ -36,10 +51,10 @@ export default function LoginModal({ isOpen, onClose }) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               type="text"
-              name="username"
               autoComplete="username"
             />
           </label>
+
           <label className={styles.label}>
             Contraseña
             <input
@@ -47,11 +62,12 @@ export default function LoginModal({ isOpen, onClose }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
-              name="password"
               autoComplete="current-password"
             />
           </label>
+
           {error && <div className={styles.error}>{error}</div>}
+
           <div className={styles.actions}>
             <button type="submit" className={styles.btnPrimary}>
               Entrar
