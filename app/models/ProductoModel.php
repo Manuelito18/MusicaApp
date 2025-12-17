@@ -38,6 +38,32 @@ class ProductoModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public static function getByCategory($idCategoria) {
+        $db = Database::connect();
+        $sql = "
+            SELECT 
+                p.\"IdProducto\",
+                p.\"Nombre\",
+                p.\"Descripcion\",
+                p.\"Precio\",
+                p.\"Stock\",
+                p.\"ImagenURL\",
+                c.\"Nombre\" AS Categoria,
+                m.\"Nombre\" AS Marca,
+                ep.\"Nombre\" AS Estado,
+                p.\"FechaCreacion\"
+            FROM \"Producto\" p
+            INNER JOIN \"Categoria\" c ON p.\"IdCategoria\" = c.\"IdCategoria\"
+            INNER JOIN \"Marca\" m ON p.\"IdMarca\" = m.\"IdMarca\"
+            INNER JOIN \"EstadoProducto\" ep ON p.\"IdEstadoProducto\" = ep.\"IdEstadoProducto\"
+            WHERE p.\"IdCategoria\" = ?
+            ORDER BY p.\"FechaCreacion\" DESC
+        ";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$idCategoria]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public static function create($data) {
         $db = Database::connect();
         $sql = "
@@ -85,6 +111,17 @@ class ProductoModel {
             $data['idEstadoProducto'],
             $id
         ]);
+    }
+
+    public static function updateStock($id, $stock) {
+        $db = Database::connect();
+        $sql = "
+            UPDATE \"Producto\" SET
+                \"Stock\" = ?
+            WHERE \"IdProducto\" = ?
+        ";
+        $stmt = $db->prepare($sql);
+        return $stmt->execute([$stock, $id]);
     }
 
     public static function delete($id) {

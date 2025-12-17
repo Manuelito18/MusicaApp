@@ -7,21 +7,16 @@ use PDOException;
 
 class Database
 {
-    private $host = "ep-snowy-breeze-agt88ljk.c-2.eu-central-1.aws.neon.tech";
+    // Datos actualizados según tus nuevas variables de Neon
+    private $host = "ep-purple-rice-ago0vkfx-pooler.c-2.eu-central-1.aws.neon.tech";
     private $port = "5432";
     private $db_name = "neondb";
     private $username = "neondb_owner";
-    private $password = "npg_4Cov9kYjEOwS";
+    private $password = "npg_z8q9iCBvQdjE";
     private $conn;
 
     public function __construct()
     {
-        // Cargar variables de entorno
-/*         $this->host = Env::get('DB_HOST', 'localhost');
-        $this->port = Env::get('DB_PORT', '5432');
-        $this->db_name = Env::get('DB_NAME', 'musicshopdb');
-        $this->username = Env::get('DB_USER', 'postgres');
-        $this->password = Env::get('DB_PASS', ''); */
     }
 
     public function connect()
@@ -29,14 +24,22 @@ class Database
         $this->conn = null;
 
         try {
-            $dsn = "pgsql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->db_name;
+            // Se integran PGSSLMODE y PGCHANNELBINDING en el DSN
+            $dsn = "pgsql:host=" . $this->host . 
+                   ";port=" . $this->port . 
+                   ";dbname=" . $this->db_name . 
+                   ";sslmode=require" . 
+                   ";channel_binding=require";
+            
             $this->conn = new PDO($dsn, $this->username, $this->password);
+            
+            // Configuración recomendada para manejo de errores
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            
         } catch (PDOException $e) {
-            // Lanzar la excepción para que sea capturada por el log de errores de PHP
-            // y evitar devolver un objeto null que cause errores fatales después.
-            throw new PDOException("Connection Error: " . $e->getMessage(), (int)$e->getCode());
+            // Lanza la excepción para capturarla en el index o controller principal
+            throw new PDOException("Error de Conexión: " . $e->getMessage(), (int)$e->getCode());
         }
 
         return $this->conn;

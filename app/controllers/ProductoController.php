@@ -21,6 +21,19 @@ class ProductoController {
         echo json_encode($producto);
     }
 
+    public static function getByCategory($idCategoria) {
+        $productos = ProductoModel::getByCategory($idCategoria);
+
+        if (empty($productos)) {
+            http_response_code(404);
+            echo json_encode(["error" => "No se encontraron productos en esta categoría"]);
+            return;
+        }
+
+        http_response_code(200);
+        echo json_encode($productos);
+    }
+
     public static function store() {
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -41,6 +54,26 @@ class ProductoController {
         ProductoModel::update($id, $data);
         http_response_code(200);
         echo json_encode(["message" => "Producto actualizado"]);
+    }
+
+    public static function updateStock($id) {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (!isset($data['stock']) || !is_numeric($data['stock'])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Stock inválido"]);
+            return;
+        }
+
+        $result = ProductoModel::updateStock($id, $data['stock']);
+        
+        if ($result) {
+            http_response_code(200);
+            echo json_encode(["message" => "Stock actualizado correctamente"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["error" => "Error al actualizar el stock"]);
+        }
     }
 
     public static function destroy($id) {

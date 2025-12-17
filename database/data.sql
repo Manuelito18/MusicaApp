@@ -73,3 +73,16 @@ INSERT INTO Producto (Nombre, Descripcion, Precio, Stock, IdCategoria, IdMarca, 
 ('Guitarra Stratocaster', 'Guitarra eléctrica clásica', 1200.00, 10, 1, 1, 1),
 ('Batería Stage Custom', 'Batería acústica completa', 3500.00, 5, 2, 2, 1),
 ('Saxofón Alto', 'Saxofón para estudiantes', 1800.00, 8, 3, 2, 1);
+
+-- Usuario Administrador
+-- Primero crear los datos personales (UserData)
+INSERT INTO UserData (Nombres, Apellidos, IdTipoDocumento, NumeroDocumento, Email, Telefono) VALUES
+('Admin', 'Sistema', 1, '00000000', 'admin@musicshop.com', '999999999');
+
+-- Crear el usuario con rol de Administrador (IdRol = 1)
+-- Password: admin123 (hash bcrypt generado con password_hash de PHP)
+-- NOTA: Este hash es válido para la contraseña "admin123"
+-- Si necesitas generar uno nuevo: php -r "echo password_hash('admin123', PASSWORD_DEFAULT);"
+INSERT INTO usuario (username, passwordhash, idrol, iduserdata) VALUES
+('admin', '$2y$12$JhEvLWZxwapVE4uD9Vol6u2YPksLf7BFEsaT4zHdGWBVDmV7owLuy', 1, 1);
+
