@@ -11,7 +11,6 @@
   padding: 0 1rem;
 
   border-bottom: 0.5px solid gray;
-
 }
 
 .logo {
@@ -178,3 +177,35 @@
   }
 }
 
+/* User button and dropdown */
+.userWrap {
+  position: relative;
+}
+.userMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: white;
+  color: #111827;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  min-width: 160px;
+  z-index: 200;
+}
+.userMenuBtn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.userName {
+  padding: 6px 8px;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 6px;
+}

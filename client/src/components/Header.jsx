@@ -2,13 +2,17 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./styles/Header.module.css";
 import { useCart } from "../context/CartContext";
-import CartSidebar from "../components/CartSidebar";
+import CartSidebar from "./CartSidebar";
+import LoginModal from "./LoginModal";
+import { useUser } from "../context/UserContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const { cartItems } = useCart();
@@ -32,6 +36,8 @@ export default function Navbar() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
   const toggleCart = () => setIsCartOpen(!isCartOpen);
+  const toggleLogin = () => setIsLoginOpen(!isLoginOpen);
+  const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
 
   return (
     <>
@@ -83,6 +89,13 @@ export default function Navbar() {
             />
             <span className={styles.cartBadge}>{totalQuantity}</span>
           </button>
+          {/* User / Login button */}
+          {/** If user logged in show user button with simple dropdown, else show Ingresar button */}
+          <UserButton
+            toggleLogin={toggleLogin}
+            toggleUserMenu={toggleUserMenu}
+            isUserMenuOpen={isUserMenuOpen}
+          />
           <button className={styles.btnGhostMenuBtn} onClick={toggleMenu}>
             <img
               className={styles.imgMenu}
@@ -106,6 +119,43 @@ export default function Navbar() {
       )}
 
       <CartSidebar isOpen={isCartOpen} toggleCart={toggleCart} />
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
+  );
+}
+
+function UserButton({ toggleLogin, toggleUserMenu, isUserMenuOpen }) {
+  const { user, logout } = useUser();
+
+  if (!user) {
+    return (
+      <button
+        className={styles.btnGhost}
+        onClick={toggleLogin}
+        title="Ingresar"
+      >
+        <img src="/imgs/icons/user.svg" alt="Ingresar" />
+      </button>
+    );
+  }
+
+  return (
+    <div className={styles.userWrap}>
+      <button
+        className={styles.btnGhost}
+        onClick={toggleUserMenu}
+        title={user.username}
+      >
+        <img src="/imgs/icons/user.svg" alt="Usuario" />
+      </button>
+      {isUserMenuOpen && (
+        <div className={styles.userMenu}>
+          <div className={styles.userName}>@{user.username}</div>
+          <button className={styles.userMenuBtn} onClick={logout}>
+            Cerrar sesión
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
