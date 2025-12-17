@@ -34,7 +34,7 @@ dist-ssr
 .dockerignore
 
 # Archivos de Scraping
-scraping/*
+scrapping/
 
 # Archivos de las pruebas
 ejecutar_pruebas.php
