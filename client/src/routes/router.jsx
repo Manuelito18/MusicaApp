@@ -7,6 +7,7 @@ import Contacto from "../pages/Contacto";
 import Nosotros from "../pages/Nosotros";
 import CategoriaProductos from "../pages/CategoriaProductos";
 import Checkout from "../pages/Checkout";
+import Admin from "../pages/Admin";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: "nosotros", element: <Nosotros /> },
       { path: "productos/:categoriaId", element: <CategoriaProductos /> },
       { path: "checkout", element: <Checkout /> },
+      { path: "admin", element: <Admin /> },
     ],
   },
 ]);

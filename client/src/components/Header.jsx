@@ -16,6 +16,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { cartItems } = useCart();
+  const { user, isAdmin } = useUser();
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
@@ -71,6 +72,13 @@ export default function Navbar() {
               Contacto
             </Link>
           </li>
+          {user && isAdmin() && (
+            <li>
+              <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
+                Administración
+              </Link>
+            </li>
+          )}
         </nav>
 
         <div className={styles.headerActions}>
@@ -125,7 +133,7 @@ export default function Navbar() {
 }
 
 function UserButton({ toggleLogin, toggleUserMenu, isUserMenuOpen }) {
-  const { user, logout } = useUser();
+  const { user, logout, isAdmin } = useUser();
 
   if (!user) {
     return (
@@ -151,6 +159,11 @@ function UserButton({ toggleLogin, toggleUserMenu, isUserMenuOpen }) {
       {isUserMenuOpen && (
         <div className={styles.userMenu}>
           <div className={styles.userName}>@{user.username}</div>
+          {isAdmin() && (
+            <Link to="/admin" className={styles.userMenuLink} onClick={toggleUserMenu}>
+              Administración
+            </Link>
+          )}
           <button className={styles.userMenuBtn} onClick={logout}>
             Cerrar sesión
           </button>
