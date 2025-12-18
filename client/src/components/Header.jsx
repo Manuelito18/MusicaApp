@@ -11,12 +11,11 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const { cartItems } = useCart();
-  const { user, isAdmin } = useUser();
+  const { user, isAdmin, isAuthModalOpen, openAuthModal, closeAuthModal, authModalMode, setAuthModalMode } = useUser();
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
@@ -36,8 +35,13 @@ export default function Navbar() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
-  const toggleCart = () => setIsCartOpen(!isCartOpen);
-  const toggleLogin = () => setIsLoginOpen(!isLoginOpen);
+  const toggleCart = () => {
+    if (!user) {
+      openAuthModal("login");
+      return;
+    }
+    setIsCartOpen(!isCartOpen);
+  };
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
 
   return (
@@ -100,7 +104,7 @@ export default function Navbar() {
           {/* User / Login button */}
           {/** If user logged in show user button with simple dropdown, else show Ingresar button */}
           <UserButton
-            toggleLogin={toggleLogin}
+            toggleLogin={() => openAuthModal("login")}
             toggleUserMenu={toggleUserMenu}
             isUserMenuOpen={isUserMenuOpen}
           />
@@ -127,13 +131,18 @@ export default function Navbar() {
       )}
 
       <CartSidebar isOpen={isCartOpen} toggleCart={toggleCart} />
-      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+      <LoginModal
+        isOpen={isAuthModalOpen}
+        mode={authModalMode}
+        setMode={setAuthModalMode}
+        onClose={closeAuthModal}
+      />
     </>
   );
 }
 
 function UserButton({ toggleLogin, toggleUserMenu, isUserMenuOpen }) {
-  const { user, logout, isAdmin } = useUser();
+  const { user, logout, isAdmin, openAuthModal } = useUser();
 
   if (!user) {
     return (
@@ -164,6 +173,9 @@ function UserButton({ toggleLogin, toggleUserMenu, isUserMenuOpen }) {
               Administración
             </Link>
           )}
+          <button className={styles.userMenuBtn} onClick={() => openAuthModal("register")}>
+            Crear cuenta (cliente)
+          </button>
           <button className={styles.userMenuBtn} onClick={logout}>
             Cerrar sesión
           </button>

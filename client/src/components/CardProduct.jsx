@@ -2,11 +2,13 @@ import styles from "./styles/CardProduct.module.css";
 import CartIcon from "/imgs/icons/CartCard.svg";
 import { useCart } from "../context/CartContext";
 import { useNotification } from "../context/NotificationContext";
+import { useUser } from "../context/UserContext";
 
 export default function CardProduct({ producto }) {
   const { nombre, precio, imagen, rating = 0, stado } = producto;
   const { addToCart } = useCart();
   const { setMessage } = useNotification();
+  const { user, openAuthModal } = useUser();
 
   const badgeLabel =
     stado === true ? "OFERTA" : stado === false ? "NUEVO" : null;
@@ -22,6 +24,11 @@ export default function CardProduct({ producto }) {
     ));
 
   const handleAddToCart = () => {
+    if (!user) {
+      setMessage("Debes iniciar sesión o crear una cuenta para agregar al carrito.");
+      openAuthModal("login");
+      return;
+    }
     addToCart(producto);
     setMessage("¡Producto añadido al carrito!");
   };

@@ -1,12 +1,35 @@
 import styles from "../components/styles/CartSidebar.module.css";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useUser } from "../context/UserContext";
 
 export default function CartSidebar({ isOpen, toggleCart }) {
   const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } =
     useCart();
+  const { user, openAuthModal } = useUser();
 
   if (!isOpen) return null;
+
+  if (!user) {
+    return (
+      <div className={styles.cartSidebar}>
+        <button className={styles.closeCartIcon} onClick={toggleCart}>
+          &times;
+        </button>
+        <h3>Tu carrito</h3>
+        <p>Debes iniciar sesión para ver el carrito.</p>
+        <button
+          className={styles.checkoutBtn}
+          onClick={() => {
+            toggleCart();
+            openAuthModal("login");
+          }}
+        >
+          Iniciar sesión / Crear cuenta
+        </button>
+      </div>
+    );
+  }
 
   const total = cartItems.reduce(
     (acc, item) => acc + item.precio * item.quantity,

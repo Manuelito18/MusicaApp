@@ -7,11 +7,16 @@ import Processing from "../components/Processing";
 import Success from "../components/Success";
 import ScrollToTop from "../components/specials/ScrollToTop";
 import { useEffect } from "react";
+import { useUser } from "../context/UserContext";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function Checkout() {
   const { cartItems, clearCart } = useCart();
+  const { user, token, getAuthHeaders } = useUser();
   const [step, setStep] = useState(1);
   const [address, setAddress] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (step === 2) {
@@ -21,15 +26,44 @@ export default function Checkout() {
     }
   }, [step]);
 
-  const handlePayment = async () => {
+  const handlePayment = async ({ method, data }) => {
     if (step === 1 && !address.trim()) {
       return alert("Por favor, completa la dirección de entrega.");
     }
+    if (!user || !token) {
+      return alert("Debes iniciar sesión para finalizar la compra.");
+    }
+    if (!cartItems.length) {
+      return alert("Tu carrito está vacío.");
+    }
+
     setStep(2);
-    setTimeout(() => {
+    setError("");
+    try {
+      const response = await fetch(`${API_URL}/app/api/checkout.php`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          address,
+          payment: { method, data },
+          items: cartItems,
+        }),
+      });
+
+      const res = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setError(res.error || "No se pudo crear el pedido.");
+        setStep(1);
+        return;
+      }
+
+      // OK: pedido creado en BD -> ahora aparecerá como venta
       setStep(3);
       clearCart();
-    }, 3000);
+    } catch (e) {
+      setError("Error de conexión con el backend.");
+      setStep(1);
+    }
   };
 
   return (
@@ -52,6 +86,7 @@ export default function Checkout() {
                   onChange={(e) => setAddress(e.target.value)}
                 />
               </div>
+              {error && <div className={styles.error}>{error}</div>}
               <PaymentForm onPay={handlePayment} />
             </div>
           </div>

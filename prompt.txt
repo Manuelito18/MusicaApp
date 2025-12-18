@@ -1,0 +1,148 @@
+Un proyecto en de la WEb de venta de instrumentos "Music - Shop", que esta diseñado con el modelo de MVC, pero usando el frontend de react como vistas, mediante llamadas de api y endpoints en php. Hay seguridad para la base de datos, hash, jwt, convertidor de json para la correcta lectura de json en el frontend;
+
+Usamos una base de datos en posgresql de Neon de instagres, desplegada y gratis.
+EL fronted con react vite.(module.css)
+
+
+
+Estructura del proyecto
+.
+├── app
+│   ├── api
+│   │   ├── admin.php
+│   │   ├── auth.php
+│   │   ├── checkout.php
+│   │   └── health.php
+│   ├── config
+│   │   ├── database.php
+│   │   ├── Database.php
+│   │   └── Env.php
+│   ├── controllers
+│   │   ├── AdminController.php
+│   │   ├── AuthController.php
+│   │   ├── CarritoController.php
+│   │   ├── CategoriaController.php
+│   │   ├── EnvioController.php
+│   │   ├── MarcaController.php
+│   │   ├── PagoController.php
+│   │   ├── PedidoController.php
+│   │   ├── ProductoController.php
+│   │   └── users
+│   │       ├── AdminUsuarioController.php
+│   │       ├── AuthController.php
+│   │       ├── UserController.php
+│   │       └── UsuarioController.php
+│   ├── middleware
+│   │   ├── AuthMiddleware.php
+│   │   └── RoleMiddleware.php
+│   ├── models
+│   │   ├── CarritoModel.php
+│   │   ├── CategoriaModel.php
+│   │   ├── ClienteModel.php
+│   │   ├── DetallePedidoModel.php
+│   │   ├── EnvioModel.php
+│   │   ├── MarcaModel.php
+│   │   ├── PagoModel.php
+│   │   ├── PedidoModel.php
+│   │   ├── ProductoModel.php
+│   │   ├── TrabajadorModel.php
+│   │   ├── UserDataModel.php
+│   │   ├── UsuarioModel.php
+│   │   └── VentaModel.php
+│   ├── routes
+│   │   ├── api.php
+│   │   └── ejemplo_uso.php
+│   └── utils
+│       └── JWTHelper.php
+├── client
+│   ├── eslint.config.js
+│   ├── index.css
+│   ├── index.html
+│   ├── normalizar.css
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   ├── 404.html
+│   │   └── imgs
+│   ├── src
+│   │   ├── AppProviders.jsx
+│   │   ├── assets
+│   │   │   └── imgs
+│   │   │       ├── ChevronLeft.svg
+│   │   │       ├── ChevronRight.svg
+│   │   │       └── iconsCateg
+│   │   │           ├── bateria.svg
+│   │   │           ├── funda-de-guitarra.png
+│   │   │           ├── guitar.svg
+│   │   │           ├── micros.svg
+│   │   │           ├── parlante.svg
+│   │   │           └── piano.svg
+│   │   ├── components
+│   │   │   ├── BlockText.jsx
+│   │   │   ├── CardPer.jsx
+│   │   │   ├── CardProduct.jsx
+│   │   │   ├── CartSidebar.jsx
+│   │   │   ├── CategoriesBlock.jsx
+│   │   │   ├── CheckoutSummary.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Header.jsx
+│   │   │   ├── HeroSlider.jsx
+│   │   │   ├── Layout.jsx
+│   │   │   ├── LoginModal.jsx
+│   │   │   ├── PaymentForm.jsx
+│   │   │   ├── Processing.jsx
+│   │   │   ├── ProductBlock.jsx
+│   │   │   ├── specials
+│   │   │   │   └── ScrollToTop.jsx
+│   │   │   ├── styles
+│   │   │   │   ├── BlockText.module.css
+│   │   │   │   ├── CardPer.module.css
+│   │   │   │   ├── CardProduct.module.css
+│   │   │   │   ├── CartSidebar.module.css
+│   │   │   │   ├── CategoriesBlock.module.css
+│   │   │   │   ├── CheckoutSummary.module.css
+│   │   │   │   ├── Footer.module.css
+│   │   │   │   ├── Header.module.css
+│   │   │   │   ├── HeroSlider.module.css
+│   │   │   │   ├── Layout.module.css
+│   │   │   │   ├── LoginModal.module.css
+│   │   │   │   ├── PaymentForm.module.css
+│   │   │   │   ├── Processing.module.css
+│   │   │   │   ├── ProductBlock.module.css
+│   │   │   │   └── Success.module.css
+│   │   │   └── Success.jsx
+│   │   ├── context
+│   │   │   ├── CartContext.jsx
+│   │   │   ├── NotificationContext.jsx
+│   │   │   └── UserContext.jsx
+│   │   ├── data
+│   │   │   ├── categProducs.js
+│   │   │   ├── favCateg.js
+│   │   │   ├── productos.js
+│   │   │   └── promos.js
+│   │   ├── main.jsx
+│   │   ├── pages
+│   │   │   ├── Admin.jsx
+│   │   │   ├── CategoriaProductos.jsx
+│   │   │   ├── Checkout.jsx
+│   │   │   ├── Contacto.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── Nosotros.jsx
+│   │   │   ├── Productos.jsx
+│   │   │   └── styles
+│   │   │       ├── Admin.module.css
+│   │   │       ├── CategoriaProductos.module.css
+│   │   │       ├── Checkout.module.css
+│   │   │       ├── Contacto.module.css
+│   │   │       ├── Home.module.css
+│   │   │       ├── Nosotros.module.css
+│   │   │       └── Productos.module.css
+│   │   └── routes
+│   │       └── router.jsx
+│   └── vite.config.js
+├── .gitignore
+├── index.php
+├── INICIO.md
+├── LICENSE
+├── prompt.txt
+└── README.md

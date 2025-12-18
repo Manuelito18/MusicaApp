@@ -3,6 +3,8 @@ require_once __DIR__ . '/../models/UsuarioModel.php';
 require_once __DIR__ . '/../models/UserDataModel.php';
 require_once __DIR__ . '/../models/ProductoModel.php';
 require_once __DIR__ . '/../models/PedidoModel.php';
+require_once __DIR__ . '/../models/VentaModel.php';
+require_once __DIR__ . '/../models/TrabajadorModel.php';
 require_once __DIR__ . '/../models/CategoriaModel.php';
 require_once __DIR__ . '/../models/MarcaModel.php';
 require_once __DIR__ . '/../config/database.php';
@@ -11,13 +13,25 @@ require_once __DIR__ . '/../middleware/RoleMiddleware.php';
 
 class AdminController {
 
+    private static function requireAdmin() {
+        AuthMiddleware::handle();
+        // RBAC por role_id = 1 (Admin)
+        RoleMiddleware::handle([1]);
+    }
+
+    private static function sanitizeString($value) {
+        if ($value === null) return null;
+        $value = trim((string)$value);
+        $value = strip_tags($value);
+        return $value;
+    }
+
     // ============================================
     // USUARIOS
     // ============================================
 
     public static function getUsuarios() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $usuarios = UsuarioModel::getAll();
         http_response_code(200);
@@ -25,8 +39,7 @@ class AdminController {
     }
 
     public static function getUsuario($id) {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $usuario = UsuarioModel::getById($id);
         if (!$usuario) {
@@ -39,8 +52,7 @@ class AdminController {
     }
 
     public static function createUsuario() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -51,7 +63,8 @@ class AdminController {
         }
 
         // Verificar si el username ya existe
-        $existingUser = UsuarioModel::getByUsername($data['username']);
+        $username = self::sanitizeString($data['username']);
+        $existingUser = UsuarioModel::getByUsername($username);
         if ($existingUser) {
             http_response_code(400);
             echo json_encode(["error" => "El username ya está en uso"]);
@@ -65,7 +78,8 @@ class AdminController {
         $idUserData = null;
         if (isset($data['nombres']) && isset($data['apellidos']) && isset($data['email'])) {
             // Verificar si el email ya existe
-            $existingEmail = UserDataModel::getByEmail($data['email']);
+            $email = self::sanitizeString($data['email']);
+            $existingEmail = UserDataModel::getByEmail($email);
             if ($existingEmail) {
                 http_response_code(400);
                 echo json_encode(["error" => "El email ya está en uso"]);
@@ -73,12 +87,12 @@ class AdminController {
             }
 
             $userData = [
-                'nombres' => $data['nombres'],
-                'apellidos' => $data['apellidos'],
+                'nombres' => self::sanitizeString($data['nombres']),
+                'apellidos' => self::sanitizeString($data['apellidos']),
                 'idTipoDocumento' => $data['idTipoDocumento'] ?? 1,
-                'numeroDocumento' => $data['numeroDocumento'] ?? '',
-                'email' => $data['email'],
-                'telefono' => $data['telefono'] ?? null
+                'numeroDocumento' => self::sanitizeString($data['numeroDocumento'] ?? ''),
+                'email' => $email,
+                'telefono' => self::sanitizeString($data['telefono'] ?? null)
             ];
             $idUserData = UserDataModel::create($userData);
         }
@@ -86,7 +100,7 @@ class AdminController {
         // Crear usuario (rol por defecto: Trabajador = 2, Cliente = 3)
         $idRol = $data['idRol'] ?? 2; // Trabajador por defecto
         $usuarioData = [
-            'username' => $data['username'],
+            'username' => $username,
             'passwordHash' => $passwordHash,
             'idRol' => $idRol,
             'idUserData' => $idUserData
@@ -102,8 +116,7 @@ class AdminController {
     }
 
     public static function updateUsuarioRol($id) {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -129,8 +142,7 @@ class AdminController {
     // ============================================
 
     public static function getProductos() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $productos = ProductoModel::getAll();
         http_response_code(200);
@@ -138,8 +150,7 @@ class AdminController {
     }
 
     public static function getProducto($id) {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $producto = ProductoModel::getById($id);
         if (!$producto) {
@@ -152,8 +163,7 @@ class AdminController {
     }
 
     public static function createProducto() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -163,6 +173,10 @@ class AdminController {
             return;
         }
 
+        // Sanitización básica (JSON output, pero limpiamos inputs)
+        $data['nombre'] = self::sanitizeString($data['nombre'] ?? '');
+        $data['descripcion'] = self::sanitizeString($data['descripcion'] ?? '');
+        $data['imagen'] = self::sanitizeString($data['imagen'] ?? '');
         $result = ProductoModel::create($data);
         if ($result) {
             http_response_code(201);
@@ -174,10 +188,13 @@ class AdminController {
     }
 
     public static function updateProducto($id) {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $data = json_decode(file_get_contents("php://input"), true);
+
+        $data['nombre'] = self::sanitizeString($data['nombre'] ?? '');
+        $data['descripcion'] = self::sanitizeString($data['descripcion'] ?? '');
+        $data['imagen'] = self::sanitizeString($data['imagen'] ?? '');
 
         $result = ProductoModel::update($id, $data);
         if ($result) {
@@ -190,8 +207,7 @@ class AdminController {
     }
 
     public static function updateProductoStock($id) {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -213,8 +229,7 @@ class AdminController {
     }
 
     public static function deleteProducto($id) {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $result = ProductoModel::delete($id);
         if ($result) {
@@ -231,39 +246,139 @@ class AdminController {
     // ============================================
 
     public static function getVentas() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
-        $ventas = PedidoModel::getAll();
+        // Venta ~= Pedido
+        $ventas = VentaModel::getAll();
         http_response_code(200);
         echo json_encode($ventas);
     }
 
     public static function getVenta($id) {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
-        $pedido = PedidoModel::getById($id);
-        if (!$pedido) {
+        $venta = VentaModel::getById($id);
+        if (!$venta) {
             http_response_code(404);
             echo json_encode(["error" => "Pedido no encontrado"]);
             return;
         }
 
-        $detalles = PedidoModel::getDetallesByPedidoId($id);
-        $pedido['detalles'] = $detalles;
+        $detalles = VentaModel::getDetallesByVentaId($id);
+        $venta['detalles'] = $detalles;
 
         http_response_code(200);
-        echo json_encode($pedido);
+        echo json_encode($venta);
     }
 
     public static function getEstadisticas() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
-        $estadisticas = PedidoModel::getTotalVentas();
+        $ventas = VentaModel::getDashboardMetrics();
+        $trab = TrabajadorModel::countAll();
+
+        // Conteo de productos
+        $db = Database::connect();
+        $prod = $db->query("SELECT COUNT(*) AS \"TotalProductos\" FROM producto")->fetch(PDO::FETCH_ASSOC);
+
+        $estadisticas = array_merge($ventas ?: [], $prod ?: [], $trab ?: []);
         http_response_code(200);
         echo json_encode($estadisticas);
+    }
+
+    // ============================================
+    // TRABAJADORES (CRUD)
+    // ============================================
+
+    public static function getTrabajadores() {
+        self::requireAdmin();
+        $trabajadores = TrabajadorModel::getAll();
+        http_response_code(200);
+        echo json_encode($trabajadores);
+    }
+
+    public static function createTrabajador() {
+        self::requireAdmin();
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (!isset($data['username']) || !isset($data['password'])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Username y password son requeridos"]);
+            return;
+        }
+
+        $username = self::sanitizeString($data['username']);
+        $existingUser = UsuarioModel::getByUsername($username);
+        if ($existingUser) {
+            http_response_code(400);
+            echo json_encode(["error" => "El username ya está en uso"]);
+            return;
+        }
+
+        $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
+
+        // Preparar userdata en el formato del model
+        $payload = [
+            'username' => $username,
+            'passwordHash' => $passwordHash,
+            'nombres' => self::sanitizeString($data['nombres'] ?? ''),
+            'apellidos' => self::sanitizeString($data['apellidos'] ?? ''),
+            'email' => self::sanitizeString($data['email'] ?? ''),
+            'telefono' => self::sanitizeString($data['telefono'] ?? null),
+            'numeroDocumento' => self::sanitizeString($data['numeroDocumento'] ?? ''),
+            'idTipoDocumento' => $data['idTipoDocumento'] ?? 1
+        ];
+
+        if ($payload['email'] !== '') {
+            $existingEmail = UserDataModel::getByEmail($payload['email']);
+            if ($existingEmail) {
+                http_response_code(400);
+                echo json_encode(["error" => "El email ya está en uso"]);
+                return;
+            }
+        }
+
+        $idUsuario = TrabajadorModel::create($payload);
+        http_response_code(201);
+        echo json_encode(["message" => "Trabajador creado correctamente", "idUsuario" => $idUsuario]);
+    }
+
+    public static function updateTrabajador($id) {
+        self::requireAdmin();
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        $payload = [];
+        if (isset($data['username'])) $payload['username'] = self::sanitizeString($data['username']);
+        if (isset($data['password']) && $data['password'] !== '') {
+            $payload['passwordHash'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
+
+        if (isset($data['userData']) && is_array($data['userData'])) {
+            $payload['userData'] = [
+                'nombres' => self::sanitizeString($data['userData']['nombres'] ?? ''),
+                'apellidos' => self::sanitizeString($data['userData']['apellidos'] ?? ''),
+                'idTipoDocumento' => $data['userData']['idTipoDocumento'] ?? 1,
+                'numeroDocumento' => self::sanitizeString($data['userData']['numeroDocumento'] ?? ''),
+                'email' => self::sanitizeString($data['userData']['email'] ?? ''),
+                'telefono' => self::sanitizeString($data['userData']['telefono'] ?? null),
+            ];
+        }
+
+        TrabajadorModel::update($id, $payload);
+        http_response_code(200);
+        echo json_encode(["message" => "Trabajador actualizado correctamente"]);
+    }
+
+    public static function deleteTrabajador($id) {
+        self::requireAdmin();
+        $ok = TrabajadorModel::delete($id);
+        if ($ok) {
+            http_response_code(200);
+            echo json_encode(["message" => "Trabajador eliminado correctamente"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["error" => "Error al eliminar el trabajador"]);
+        }
     }
 
     // ============================================
@@ -271,27 +386,24 @@ class AdminController {
     // ============================================
 
     public static function getCategorias() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         require_once __DIR__ . '/CategoriaController.php';
         CategoriaController::index();
     }
 
     public static function getMarcas() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         require_once __DIR__ . '/MarcaController.php';
         MarcaController::index();
     }
 
     public static function getRoles() {
-        AuthMiddleware::handle();
-        RoleMiddleware::handle(['Administrador']);
+        self::requireAdmin();
         
         $db = Database::connect();
-        $sql = "SELECT \"IdRol\", \"Nombre\" FROM \"Rol\" ORDER BY \"IdRol\"";
+        $sql = "SELECT idrol AS \"IdRol\", nombre AS \"Nombre\" FROM rol ORDER BY idrol";
         $stmt = $db->query($sql);
         $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         

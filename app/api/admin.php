@@ -78,6 +78,21 @@ try {
             echo json_encode(["error" => "Ruta no encontrada"]);
         }
     }
+    // Rutas de trabajadores
+    elseif ($pathParts[0] === 'trabajadores') {
+        if ($method === 'GET' && count($pathParts) === 1) {
+            AdminController::getTrabajadores();
+        } elseif ($method === 'POST' && count($pathParts) === 1) {
+            AdminController::createTrabajador();
+        } elseif ($method === 'PUT' && count($pathParts) === 2) {
+            AdminController::updateTrabajador($pathParts[1]);
+        } elseif ($method === 'DELETE' && count($pathParts) === 2) {
+            AdminController::deleteTrabajador($pathParts[1]);
+        } else {
+            http_response_code(404);
+            echo json_encode(["error" => "Ruta no encontrada"]);
+        }
+    }
     // Estadísticas
     elseif ($pathParts[0] === 'estadisticas' && $method === 'GET') {
         AdminController::getEstadisticas();

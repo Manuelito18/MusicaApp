@@ -22,6 +22,10 @@ export const UserProvider = ({ children }) => {
     return localStorage.getItem("token") || null;
   });
 
+  // Auth modal global (para abrir desde cualquier componente)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState("login"); // 'login' | 'register'
+
   useEffect(() => {
     if (user && token) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -31,6 +35,15 @@ export const UserProvider = ({ children }) => {
       localStorage.removeItem("token");
     }
   }, [user, token]);
+
+  const openAuthModal = (mode = "login") => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false);
+  };
 
   const login = async ({ username, password }) => {
     try {
@@ -75,9 +88,41 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const register = async ({ username, password, email, nombres, apellidos, telefono, numeroDocumento }) => {
+    try {
+      const response = await fetch(`${API_URL}/app/api/auth.php?path=register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          email,
+          nombres,
+          apellidos,
+          telefono,
+          numeroDocumento,
+          idRol: 3, // Cliente
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        return { success: false, message: data.error || "No se pudo registrar" };
+      }
+
+      // Auto-login luego del registro
+      return await login({ username, password });
+    } catch (error) {
+      return { success: false, message: `Error de conexión: ${error.message}` };
+    }
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
+    closeAuthModal();
   };
 
   const isAdmin = () => {
@@ -93,7 +138,22 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, token, login, logout, isAdmin, getAuthHeaders }}>
+    <UserContext.Provider
+      value={{
+        user,
+        token,
+        login,
+        register,
+        logout,
+        isAdmin,
+        getAuthHeaders,
+        isAuthModalOpen,
+        authModalMode,
+        openAuthModal,
+        closeAuthModal,
+        setAuthModalMode,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

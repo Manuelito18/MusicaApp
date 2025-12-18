@@ -1,12 +1,14 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
-class PedidoModel {
+// Venta ~= Pedido (ventas registradas)
+class VentaModel {
 
     public static function getAll() {
         $db = Database::connect();
         $sql = "
             SELECT 
+                p.idpedido AS \"IdVenta\",
                 p.idpedido AS \"IdPedido\",
                 p.fecha AS \"Fecha\",
                 p.total AS \"Total\",
@@ -31,6 +33,7 @@ class PedidoModel {
         $db = Database::connect();
         $sql = "
             SELECT 
+                p.idpedido AS \"IdVenta\",
                 p.idpedido AS \"IdPedido\",
                 p.fecha AS \"Fecha\",
                 p.total AS \"Total\",
@@ -53,7 +56,7 @@ class PedidoModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public static function getDetallesByPedidoId($idPedido) {
+    public static function getDetallesByVentaId($idVenta) {
         $db = Database::connect();
         $sql = "
             SELECT 
@@ -68,21 +71,22 @@ class PedidoModel {
             WHERE dp.idpedido = ?
         ";
         $stmt = $db->prepare($sql);
-        $stmt->execute([$idPedido]);
+        $stmt->execute([$idVenta]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function getTotalVentas() {
+    public static function getDashboardMetrics() {
         $db = Database::connect();
         $sql = "
             SELECT 
                 COUNT(*) AS \"TotalPedidos\",
                 COALESCE(SUM(total), 0) AS \"TotalVentas\"
             FROM pedido
-            WHERE idestadopedido IN (2, 3, 4) -- Pagado, Enviado, Entregado
+            WHERE idestadopedido IN (2, 3, 4)
         ";
         $stmt = $db->query($sql);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
+
 

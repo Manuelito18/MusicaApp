@@ -7,17 +7,17 @@ class UserDataModel {
         $db = Database::connect();
         $sql = "
             SELECT 
-                ud.\"IdUserData\",
-                ud.\"Nombres\",
-                ud.\"Apellidos\",
-                ud.\"IdTipoDocumento\",
-                ud.\"NumeroDocumento\",
-                ud.\"Email\",
-                ud.\"Telefono\",
-                td.\"Nombre\" AS TipoDocumento
+                ud.iduserdata AS \"IdUserData\",
+                ud.nombres AS \"Nombres\",
+                ud.apellidos AS \"Apellidos\",
+                ud.idtipodocumento AS \"IdTipoDocumento\",
+                ud.numerodocumento AS \"NumeroDocumento\",
+                ud.email AS \"Email\",
+                ud.telefono AS \"Telefono\",
+                td.nombre AS \"TipoDocumento\"
             FROM userdata ud
-            LEFT JOIN tipodocumento td ON ud.\"IdTipoDocumento\" = td.\"IdTipoDocumento\"
-            WHERE ud.\"IdUserData\" = ?
+            LEFT JOIN tipodocumento td ON ud.idtipodocumento = td.idtipodocumento
+            WHERE ud.iduserdata = ?
         ";
         $stmt = $db->prepare($sql);
         $stmt->execute([$id]);
@@ -28,9 +28,9 @@ class UserDataModel {
         $db = Database::connect();
         $sql = "
             INSERT INTO userdata 
-            (\"Nombres\", \"Apellidos\", \"IdTipoDocumento\", \"NumeroDocumento\", \"Email\", \"Telefono\")
+            (nombres, apellidos, idtipodocumento, numerodocumento, email, telefono)
             VALUES (?, ?, ?, ?, ?, ?)
-            RETURNING \"IdUserData\"
+            RETURNING iduserdata AS \"IdUserData\"
         ";
         $stmt = $db->prepare($sql);
         $stmt->execute([
@@ -48,13 +48,13 @@ class UserDataModel {
         $db = Database::connect();
         $sql = "
             UPDATE userdata SET
-                \"Nombres\" = ?,
-                \"Apellidos\" = ?,
-                \"IdTipoDocumento\" = ?,
-                \"NumeroDocumento\" = ?,
-                \"Email\" = ?,
-                \"Telefono\" = ?
-            WHERE \"IdUserData\" = ?
+                nombres = ?,
+                apellidos = ?,
+                idtipodocumento = ?,
+                numerodocumento = ?,
+                email = ?,
+                telefono = ?
+            WHERE iduserdata = ?
         ";
         $stmt = $db->prepare($sql);
         return $stmt->execute([
@@ -72,11 +72,17 @@ class UserDataModel {
         $db = Database::connect();
         $sql = "
             SELECT * FROM userdata
-            WHERE \"Email\" = ?
+            WHERE email = ?
         ";
         $stmt = $db->prepare($sql);
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public static function delete($id) {
+        $db = Database::connect();
+        $stmt = $db->prepare("DELETE FROM userdata WHERE iduserdata = ?");
+        return $stmt->execute([$id]);
     }
 }
 

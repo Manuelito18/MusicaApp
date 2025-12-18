@@ -8,8 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 export default function Admin() {
   const { user, isAdmin, getAuthHeaders, logout } = useUser();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("ventas");
-  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [error, setError] = useState("");
 
   // Verificar si es admin
@@ -46,6 +45,12 @@ export default function Admin() {
 
       <div className={styles.tabs}>
         <button
+          className={`${styles.tab} ${activeTab === "dashboard" ? styles.active : ""}`}
+          onClick={() => setActiveTab("dashboard")}
+        >
+          Dashboard
+        </button>
+        <button
           className={`${styles.tab} ${activeTab === "ventas" ? styles.active : ""}`}
           onClick={() => setActiveTab("ventas")}
         >
@@ -72,10 +77,63 @@ export default function Admin() {
       </div>
 
       <div className={styles.content}>
+        {activeTab === "dashboard" && <DashboardTab />}
         {activeTab === "ventas" && <VentasTab />}
         {activeTab === "productos" && <ProductosTab />}
         {activeTab === "usuarios" && <UsuariosTab />}
         {activeTab === "trabajadores" && <TrabajadoresTab />}
+      </div>
+    </div>
+  );
+}
+
+function DashboardTab() {
+  const { getAuthHeaders } = useUser();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/app/api/admin.php?path=estadisticas`, {
+        headers: getAuthHeaders(),
+      });
+      const data = await response.json();
+      if (response.ok) setStats(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div className={styles.loading}>Cargando dashboard...</div>;
+
+  return (
+    <div className={styles.tabContent}>
+      <h2>Métricas</h2>
+      <div className={styles.metricsGrid}>
+        <div className={styles.metricCard}>
+          <div className={styles.metricLabel}>Total Ventas</div>
+          <div className={styles.metricValue}>
+            S/ {stats ? Number(stats.TotalVentas || 0).toFixed(2) : "0.00"}
+          </div>
+        </div>
+        <div className={styles.metricCard}>
+          <div className={styles.metricLabel}>Total Pedidos</div>
+          <div className={styles.metricValue}>{stats ? stats.TotalPedidos || 0 : 0}</div>
+        </div>
+        <div className={styles.metricCard}>
+          <div className={styles.metricLabel}>Productos</div>
+          <div className={styles.metricValue}>{stats ? stats.TotalProductos || 0 : 0}</div>
+        </div>
+        <div className={styles.metricCard}>
+          <div className={styles.metricLabel}>Trabajadores</div>
+          <div className={styles.metricValue}>{stats ? stats.TotalTrabajadores || 0 : 0}</div>
+        </div>
       </div>
     </div>
   );
@@ -594,6 +652,8 @@ function TrabajadoresTab() {
   const [trabajadores, setTrabajadores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [roles, setRoles] = useState([]);
   const [formData, setFormData] = useState({
     username: "",
@@ -614,14 +674,12 @@ function TrabajadoresTab() {
   const fetchTrabajadores = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=usuarios`, {
+      const response = await fetch(`${API_URL}/app/api/admin.php?path=trabajadores`, {
         headers: getAuthHeaders(),
       });
       const data = await response.json();
       if (response.ok) {
-        // Filtrar solo trabajadores (rol 2)
-        const trabajadores = data.filter((u) => u.IdRol === 2 || u.Rol === "Trabajador");
-        setTrabajadores(trabajadores);
+        setTrabajadores(data);
       }
     } catch (error) {
       console.error("Error al cargar trabajadores:", error);
@@ -647,7 +705,7 @@ function TrabajadoresTab() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/app/api/admin.php/usuarios`, {
+      const response = await fetch(`${API_URL}/app/api/admin.php?path=trabajadores`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(formData),
@@ -669,6 +727,62 @@ function TrabajadoresTab() {
       }
     } catch (error) {
       console.error("Error al crear trabajador:", error);
+    }
+  };
+
+  const openEdit = (t) => {
+    setEditing({ ...t, password: "" });
+    setShowEditForm(true);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editing) return;
+    try {
+      const payload = {
+        username: editing.Username,
+        password: editing.password || "",
+        userData: {
+          nombres: editing.Nombres || "",
+          apellidos: editing.Apellidos || "",
+          email: editing.Email || "",
+          telefono: editing.Telefono || "",
+          numeroDocumento: editing.NumeroDocumento || "",
+          idTipoDocumento: 1,
+        },
+      };
+
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=trabajadores/${editing.IdUsuario}`,
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (response.ok) {
+        setShowEditForm(false);
+        setEditing(null);
+        fetchTrabajadores();
+      }
+    } catch (error) {
+      console.error("Error al actualizar trabajador:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("¿Eliminar este trabajador?")) return;
+    try {
+      const response = await fetch(`${API_URL}/app/api/admin.php?path=trabajadores/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+      if (response.ok) {
+        fetchTrabajadores();
+      }
+    } catch (error) {
+      console.error("Error al eliminar trabajador:", error);
     }
   };
 
@@ -779,6 +893,86 @@ function TrabajadoresTab() {
         </div>
       )}
 
+      {showEditForm && editing && (
+        <div
+          className={styles.modal}
+          onClick={() => {
+            setShowEditForm(false);
+            setEditing(null);
+          }}
+        >
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3>Editar Trabajador</h3>
+            <form onSubmit={handleEditSubmit} className={styles.form}>
+              <label>
+                Username:
+                <input
+                  type="text"
+                  value={editing.Username}
+                  onChange={(e) => setEditing({ ...editing, Username: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Nueva contraseña (opcional):
+                <input
+                  type="password"
+                  value={editing.password || ""}
+                  onChange={(e) => setEditing({ ...editing, password: e.target.value })}
+                />
+              </label>
+              <label>
+                Nombres:
+                <input
+                  type="text"
+                  value={editing.Nombres || ""}
+                  onChange={(e) => setEditing({ ...editing, Nombres: e.target.value })}
+                />
+              </label>
+              <label>
+                Apellidos:
+                <input
+                  type="text"
+                  value={editing.Apellidos || ""}
+                  onChange={(e) => setEditing({ ...editing, Apellidos: e.target.value })}
+                />
+              </label>
+              <label>
+                Email:
+                <input
+                  type="email"
+                  value={editing.Email || ""}
+                  onChange={(e) => setEditing({ ...editing, Email: e.target.value })}
+                />
+              </label>
+              <label>
+                Teléfono:
+                <input
+                  type="text"
+                  value={editing.Telefono || ""}
+                  onChange={(e) => setEditing({ ...editing, Telefono: e.target.value })}
+                />
+              </label>
+              <div className={styles.formActions}>
+                <button type="submit" className={styles.btnPrimary}>
+                  Guardar
+                </button>
+                <button
+                  type="button"
+                  className={styles.btnSecondary}
+                  onClick={() => {
+                    setShowEditForm(false);
+                    setEditing(null);
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
@@ -790,6 +984,7 @@ function TrabajadoresTab() {
               <th>Email</th>
               <th>Teléfono</th>
               <th>Rol</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -803,6 +998,14 @@ function TrabajadoresTab() {
                 <td>{trabajador.Telefono || "-"}</td>
                 <td>
                   <span className={styles.badge}>{trabajador.Rol}</span>
+                </td>
+                <td>
+                  <button className={styles.btnSmall} onClick={() => openEdit(trabajador)}>
+                    Editar
+                  </button>
+                  <button className={styles.btnDanger} onClick={() => handleDelete(trabajador.IdUsuario)}>
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             ))}

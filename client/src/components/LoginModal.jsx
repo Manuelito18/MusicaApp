@@ -4,10 +4,15 @@ import { useUser } from "../context/UserContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-export default function LoginModal({ isOpen, onClose }) {
-  const { login } = useUser();
+export default function LoginModal({ isOpen, onClose, mode = "login", setMode }) {
+  const { login, register } = useUser();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [nombres, setNombres] = useState("");
+  const [apellidos, setApellidos] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [numeroDocumento, setNumeroDocumento] = useState("");
   const [error, setError] = useState("");
   const [dbStatus, setDbStatus] = useState(null); // null, 'checking', 'connected', 'disconnected'
   const [loading, setLoading] = useState(false);
@@ -18,6 +23,11 @@ export default function LoginModal({ isOpen, onClose }) {
       checkDatabaseConnection();
     }
   }, [isOpen]);
+
+  // Limpiar errores cuando cambias modo
+  useEffect(() => {
+    if (isOpen) setError("");
+  }, [mode, isOpen]);
 
   // 🔒 Bloquear scroll del body cuando el modal está abierto
   useEffect(() => {
@@ -67,13 +77,30 @@ export default function LoginModal({ isOpen, onClose }) {
 
     setLoading(true);
     try {
-      const res = await login({ username, password });
+      const res =
+        mode === "register"
+          ? await register({
+              username,
+              password,
+              email,
+              nombres,
+              apellidos,
+              telefono,
+              numeroDocumento,
+            })
+          : await login({ username, password });
       if (res.success) {
         setError("");
         onClose();
         // Limpiar campos
         setUsername("");
         setPassword("");
+        setEmail("");
+        setNombres("");
+        setApellidos("");
+        setTelefono("");
+        setNumeroDocumento("");
+        if (setMode) setMode("login");
       } else {
         setError(res.message || "Error al iniciar sesión");
       }
@@ -92,6 +119,23 @@ export default function LoginModal({ isOpen, onClose }) {
         </button>
 
         <h3 className={styles.title}>Acceso al sistema</h3>
+
+        <div className={styles.modeTabs}>
+          <button
+            type="button"
+            className={`${styles.modeTab} ${mode === "login" ? styles.modeActive : ""}`}
+            onClick={() => setMode && setMode("login")}
+          >
+            Ingresar
+          </button>
+          <button
+            type="button"
+            className={`${styles.modeTab} ${mode === "register" ? styles.modeActive : ""}`}
+            onClick={() => setMode && setMode("register")}
+          >
+            Crear cuenta
+          </button>
+        </div>
 
         {/* Indicador de estado de la base de datos */}
         {dbStatus === "checking" && (
@@ -142,6 +186,65 @@ export default function LoginModal({ isOpen, onClose }) {
             />
           </label>
 
+          {mode === "register" && (
+            <>
+              <label className={styles.label}>
+                Email
+                <input
+                  className={styles.input}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  autoComplete="email"
+                  disabled={dbStatus !== "connected" || loading}
+                  required
+                />
+              </label>
+              <label className={styles.label}>
+                Nombres
+                <input
+                  className={styles.input}
+                  value={nombres}
+                  onChange={(e) => setNombres(e.target.value)}
+                  type="text"
+                  disabled={dbStatus !== "connected" || loading}
+                  required
+                />
+              </label>
+              <label className={styles.label}>
+                Apellidos
+                <input
+                  className={styles.input}
+                  value={apellidos}
+                  onChange={(e) => setApellidos(e.target.value)}
+                  type="text"
+                  disabled={dbStatus !== "connected" || loading}
+                  required
+                />
+              </label>
+              <label className={styles.label}>
+                Teléfono
+                <input
+                  className={styles.input}
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                  type="text"
+                  disabled={dbStatus !== "connected" || loading}
+                />
+              </label>
+              <label className={styles.label}>
+                N° Documento
+                <input
+                  className={styles.input}
+                  value={numeroDocumento}
+                  onChange={(e) => setNumeroDocumento(e.target.value)}
+                  type="text"
+                  disabled={dbStatus !== "connected" || loading}
+                />
+              </label>
+            </>
+          )}
+
           {error && <div className={styles.error}>{error}</div>}
 
           <div className={styles.actions}>
@@ -150,7 +253,13 @@ export default function LoginModal({ isOpen, onClose }) {
               className={styles.btnPrimary}
               disabled={dbStatus !== "connected" || loading}
             >
-              {loading ? "Iniciando sesión..." : "Entrar"}
+              {loading
+                ? mode === "register"
+                  ? "Creando cuenta..."
+                  : "Iniciando sesión..."
+                : mode === "register"
+                  ? "Crear cuenta"
+                  : "Entrar"}
             </button>
             <button type="button" className={styles.btnGhost} onClick={onClose}>
               Cancelar

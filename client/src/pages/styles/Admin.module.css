@@ -94,6 +94,32 @@
   margin-bottom: 1.5rem;
 }
 
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.metricCard {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.metricLabel {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.metricValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111;
+}
+
 .loading {
   text-align: center;
   padding: 3rem;
@@ -316,6 +342,10 @@
 
   .tabs {
     flex-wrap: wrap;
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .table {

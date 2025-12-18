@@ -12,7 +12,7 @@ class UsuarioModel {
                 u.idrol AS \"IdRol\",
                 u.iduserdata AS \"IdUserData\",
                 u.fecharegistro AS \"FechaRegistro\",
-                r.nombre AS Rol,
+                r.nombre AS \"Rol\",
                 ud.nombres AS \"Nombres\",
                 ud.apellidos AS \"Apellidos\",
                 ud.email AS \"Email\",
@@ -39,7 +39,7 @@ class UsuarioModel {
                 u.idrol AS \"IdRol\",
                 u.iduserdata AS \"IdUserData\",
                 u.fecharegistro AS \"FechaRegistro\",
-                r.nombre AS Rol
+                r.nombre AS \"Rol\"
             FROM usuario u
             LEFT JOIN rol r ON u.idrol = r.idrol
             WHERE u.username = ?
@@ -58,7 +58,7 @@ class UsuarioModel {
                 u.idrol AS \"IdRol\",
                 u.iduserdata AS \"IdUserData\",
                 u.fecharegistro AS \"FechaRegistro\",
-                r.nombre AS Rol,
+                r.nombre AS \"Rol\",
                 ud.nombres AS \"Nombres\",
                 ud.apellidos AS \"Apellidos\",
                 ud.email AS \"Email\",
@@ -132,6 +132,22 @@ class UsuarioModel {
         ";
         $stmt = $db->prepare($sql);
         return $stmt->execute([$idUserData, $id]);
+    }
+
+    public static function delete($id) {
+        $db = Database::connect();
+        // Primero obtener iduserdata para posible limpieza
+        $stmtGet = $db->prepare("SELECT iduserdata FROM usuario WHERE idusuario = ?");
+        $stmtGet->execute([$id]);
+        $row = $stmtGet->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $db->prepare("DELETE FROM usuario WHERE idusuario = ?");
+        $ok = $stmt->execute([$id]);
+
+        return [
+            'success' => (bool)$ok,
+            'idUserData' => $row['iduserdata'] ?? null
+        ];
     }
 }
 
