@@ -33,7 +33,7 @@ php -S localhost:8000
 ```
 
 - **Frontend:** Accesible en `http://localhost:5173` (o el puerto que Vite asigne).
-- **Backend:** Corriendo en `http://localhost:8000`.
+- **Backend:** Corriendo en `http://localhost/WEBS/MusicaApp/`.
 
 > **Nota:** El backend incluido es intencionalmente simple, ¡perfecto para empezar!
 
@@ -104,13 +104,13 @@ El backend PHP expone endpoints de ejemplo. Aquí tienes uno para empezar:
 **Ejemplo con `curl`:**
 
 ```bash
-curl http://localhost:8000/app/api/devs.php
+curl http://localhost/WEBS/MusicaApp//app/api/devs.php
 ```
 
 **Ejemplo de `fetch` desde el frontend (Vite):**
 
 ```js
-const base = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const base = import.meta.env.VITE_API_URL || "http://localhost/WEBS/MusicaApp/";
 fetch(`${base}/app/api/devs.php`)
   .then((res) => res.json())
   .then((data) => console.log(data));
@@ -119,7 +119,7 @@ fetch(`${base}/app/api/devs.php`)
 > **Consejo Pro:** Crea un archivo `.env` o `.env.local` en tu carpeta `client/` para definir la URL de la API:
 >
 > ```text
-> VITE_API_URL=http://localhost:8000
+> VITE_API_URL=http://localhost/WEBS/MusicaApp/
 > ```
 >
 > ¡Recuerda reiniciar Vite después de crear o modificar tu `.env`!

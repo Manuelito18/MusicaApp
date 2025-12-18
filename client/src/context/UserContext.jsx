@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost/WEBS/MusicaApp/";
 
 const UserContext = createContext(null);
 
@@ -67,7 +68,10 @@ export const UserProvider = ({ children }) => {
       }
 
       if (!response.ok) {
-        return { success: false, message: data.error || "Error al iniciar sesión" };
+        return {
+          success: false,
+          message: data.error || "Error al iniciar sesión",
+        };
       }
 
       setToken(data.token);
@@ -88,28 +92,42 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  const register = async ({ username, password, email, nombres, apellidos, telefono, numeroDocumento }) => {
+  const register = async ({
+    username,
+    password,
+    email,
+    nombres,
+    apellidos,
+    telefono,
+    numeroDocumento,
+  }) => {
     try {
-      const response = await fetch(`${API_URL}/app/api/auth.php?path=register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          email,
-          nombres,
-          apellidos,
-          telefono,
-          numeroDocumento,
-          idRol: 3, // Cliente
-        }),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/auth.php?path=register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+            email,
+            nombres,
+            apellidos,
+            telefono,
+            numeroDocumento,
+            idRol: 3, // Cliente
+          }),
+        }
+      );
 
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        return { success: false, message: data.error || "No se pudo registrar" };
+        return {
+          success: false,
+          message: data.error || "No se pudo registrar",
+        };
       }
 
       // Auto-login luego del registro

@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import styles from "./styles/Admin.module.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost/WEBS/MusicaApp/";
 
 export default function Admin() {
   const { user, isAdmin, getAuthHeaders, logout } = useUser();
@@ -45,31 +46,41 @@ export default function Admin() {
 
       <div className={styles.tabs}>
         <button
-          className={`${styles.tab} ${activeTab === "dashboard" ? styles.active : ""}`}
+          className={`${styles.tab} ${
+            activeTab === "dashboard" ? styles.active : ""
+          }`}
           onClick={() => setActiveTab("dashboard")}
         >
           Dashboard
         </button>
         <button
-          className={`${styles.tab} ${activeTab === "ventas" ? styles.active : ""}`}
+          className={`${styles.tab} ${
+            activeTab === "ventas" ? styles.active : ""
+          }`}
           onClick={() => setActiveTab("ventas")}
         >
           Ventas
         </button>
         <button
-          className={`${styles.tab} ${activeTab === "productos" ? styles.active : ""}`}
+          className={`${styles.tab} ${
+            activeTab === "productos" ? styles.active : ""
+          }`}
           onClick={() => setActiveTab("productos")}
         >
           Productos
         </button>
         <button
-          className={`${styles.tab} ${activeTab === "usuarios" ? styles.active : ""}`}
+          className={`${styles.tab} ${
+            activeTab === "usuarios" ? styles.active : ""
+          }`}
           onClick={() => setActiveTab("usuarios")}
         >
           Usuarios
         </button>
         <button
-          className={`${styles.tab} ${activeTab === "trabajadores" ? styles.active : ""}`}
+          className={`${styles.tab} ${
+            activeTab === "trabajadores" ? styles.active : ""
+          }`}
           onClick={() => setActiveTab("trabajadores")}
         >
           Trabajadores
@@ -100,9 +111,12 @@ function DashboardTab() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=estadisticas`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=estadisticas`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       const data = await response.json();
       if (response.ok) setStats(data);
     } finally {
@@ -110,7 +124,8 @@ function DashboardTab() {
     }
   };
 
-  if (loading) return <div className={styles.loading}>Cargando dashboard...</div>;
+  if (loading)
+    return <div className={styles.loading}>Cargando dashboard...</div>;
 
   return (
     <div className={styles.tabContent}>
@@ -124,15 +139,21 @@ function DashboardTab() {
         </div>
         <div className={styles.metricCard}>
           <div className={styles.metricLabel}>Total Pedidos</div>
-          <div className={styles.metricValue}>{stats ? stats.TotalPedidos || 0 : 0}</div>
+          <div className={styles.metricValue}>
+            {stats ? stats.TotalPedidos || 0 : 0}
+          </div>
         </div>
         <div className={styles.metricCard}>
           <div className={styles.metricLabel}>Productos</div>
-          <div className={styles.metricValue}>{stats ? stats.TotalProductos || 0 : 0}</div>
+          <div className={styles.metricValue}>
+            {stats ? stats.TotalProductos || 0 : 0}
+          </div>
         </div>
         <div className={styles.metricCard}>
           <div className={styles.metricLabel}>Trabajadores</div>
-          <div className={styles.metricValue}>{stats ? stats.TotalTrabajadores || 0 : 0}</div>
+          <div className={styles.metricValue}>
+            {stats ? stats.TotalTrabajadores || 0 : 0}
+          </div>
         </div>
       </div>
     </div>
@@ -169,9 +190,12 @@ function VentasTab() {
 
   const verDetalle = async (id) => {
     try {
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=ventas/${id}`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=ventas/${id}`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setSelectedVenta(data);
@@ -226,14 +250,30 @@ function VentasTab() {
 
       {selectedVenta && (
         <div className={styles.modal} onClick={() => setSelectedVenta(null)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3>Detalle de Venta #{selectedVenta.IdPedido}</h3>
             <div className={styles.detailInfo}>
-              <p><strong>Cliente:</strong> {selectedVenta.Nombres} {selectedVenta.Apellidos}</p>
-              <p><strong>Email:</strong> {selectedVenta.Email}</p>
-              <p><strong>Fecha:</strong> {new Date(selectedVenta.Fecha).toLocaleString()}</p>
-              <p><strong>Estado:</strong> {selectedVenta.EstadoPedido}</p>
-              <p><strong>Total:</strong> S/ {parseFloat(selectedVenta.Total).toFixed(2)}</p>
+              <p>
+                <strong>Cliente:</strong> {selectedVenta.Nombres}{" "}
+                {selectedVenta.Apellidos}
+              </p>
+              <p>
+                <strong>Email:</strong> {selectedVenta.Email}
+              </p>
+              <p>
+                <strong>Fecha:</strong>{" "}
+                {new Date(selectedVenta.Fecha).toLocaleString()}
+              </p>
+              <p>
+                <strong>Estado:</strong> {selectedVenta.EstadoPedido}
+              </p>
+              <p>
+                <strong>Total:</strong> S/{" "}
+                {parseFloat(selectedVenta.Total).toFixed(2)}
+              </p>
             </div>
             <h4>Productos:</h4>
             <table className={styles.table}>
@@ -256,7 +296,10 @@ function VentasTab() {
                 ))}
               </tbody>
             </table>
-            <button className={styles.btnClose} onClick={() => setSelectedVenta(null)}>
+            <button
+              className={styles.btnClose}
+              onClick={() => setSelectedVenta(null)}
+            >
               Cerrar
             </button>
           </div>
@@ -295,9 +338,12 @@ function ProductosTab() {
   const fetchProductos = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=productos`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=productos`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setProductos(data);
@@ -311,9 +357,12 @@ function ProductosTab() {
 
   const fetchCategorias = async () => {
     try {
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=categorias`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=categorias`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setCategorias(data);
@@ -343,7 +392,7 @@ function ProductosTab() {
       const url = editingProducto
         ? `${API_URL}/app/api/admin.php?path=productos/${editingProducto.IdProducto}`
         : `${API_URL}/app/api/admin.php?path=productos`;
-      
+
       const response = await fetch(url, {
         method: editingProducto ? "PUT" : "POST",
         headers: getAuthHeaders(),
@@ -388,10 +437,13 @@ function ProductosTab() {
   const handleDelete = async (id) => {
     if (!confirm("¿Estás seguro de eliminar este producto?")) return;
     try {
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=productos/${id}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=productos/${id}`,
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
+      );
       if (response.ok) {
         fetchProductos();
       }
@@ -404,11 +456,14 @@ function ProductosTab() {
     const stock = prompt("Ingrese el nuevo stock:", nuevoStock);
     if (stock === null || isNaN(stock)) return;
     try {
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=productos/${id}/stock`, {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ stock: parseInt(stock) }),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=productos/${id}/stock`,
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ stock: parseInt(stock) }),
+        }
+      );
       if (response.ok) {
         fetchProductos();
       }
@@ -417,7 +472,8 @@ function ProductosTab() {
     }
   };
 
-  if (loading) return <div className={styles.loading}>Cargando productos...</div>;
+  if (loading)
+    return <div className={styles.loading}>Cargando productos...</div>;
 
   return (
     <div className={styles.tabContent}>
@@ -429,8 +485,17 @@ function ProductosTab() {
       </div>
 
       {showForm && (
-        <div className={styles.modal} onClick={() => { setShowForm(false); setEditingProducto(null); }}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div
+          className={styles.modal}
+          onClick={() => {
+            setShowForm(false);
+            setEditingProducto(null);
+          }}
+        >
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3>{editingProducto ? "Editar Producto" : "Nuevo Producto"}</h3>
             <form onSubmit={handleSubmit} className={styles.form}>
               <label>
@@ -438,7 +503,9 @@ function ProductosTab() {
                 <input
                   type="text"
                   value={formData.nombre}
-                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, nombre: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -446,7 +513,9 @@ function ProductosTab() {
                 Descripción:
                 <textarea
                   value={formData.descripcion}
-                  onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, descripcion: e.target.value })
+                  }
                 />
               </label>
               <label>
@@ -455,7 +524,9 @@ function ProductosTab() {
                   type="number"
                   step="0.01"
                   value={formData.precio}
-                  onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, precio: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -464,7 +535,9 @@ function ProductosTab() {
                 <input
                   type="number"
                   value={formData.stock}
-                  onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, stock: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -473,14 +546,18 @@ function ProductosTab() {
                 <input
                   type="text"
                   value={formData.imagen}
-                  onChange={(e) => setFormData({ ...formData, imagen: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, imagen: e.target.value })
+                  }
                 />
               </label>
               <label>
                 Categoría:
                 <select
                   value={formData.idCategoria}
-                  onChange={(e) => setFormData({ ...formData, idCategoria: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, idCategoria: e.target.value })
+                  }
                   required
                 >
                   <option value="">Seleccione...</option>
@@ -495,7 +572,9 @@ function ProductosTab() {
                 Marca:
                 <select
                   value={formData.idMarca}
-                  onChange={(e) => setFormData({ ...formData, idMarca: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, idMarca: e.target.value })
+                  }
                   required
                 >
                   <option value="">Seleccione...</option>
@@ -513,7 +592,10 @@ function ProductosTab() {
                 <button
                   type="button"
                   className={styles.btnSecondary}
-                  onClick={() => { setShowForm(false); setEditingProducto(null); }}
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditingProducto(null);
+                  }}
                 >
                   Cancelar
                 </button>
@@ -549,7 +631,9 @@ function ProductosTab() {
                   <span className={styles.stock}>{producto.Stock}</span>
                   <button
                     className={styles.btnStock}
-                    onClick={() => updateStock(producto.IdProducto, producto.Stock)}
+                    onClick={() =>
+                      updateStock(producto.IdProducto, producto.Stock)
+                    }
                   >
                     📦
                   </button>
@@ -593,9 +677,12 @@ function UsuariosTab() {
   const fetchUsuarios = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=usuarios`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=usuarios`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setUsuarios(data);
@@ -607,7 +694,8 @@ function UsuariosTab() {
     }
   };
 
-  if (loading) return <div className={styles.loading}>Cargando usuarios...</div>;
+  if (loading)
+    return <div className={styles.loading}>Cargando usuarios...</div>;
 
   return (
     <div className={styles.tabContent}>
@@ -634,7 +722,9 @@ function UsuariosTab() {
                 <td>{usuario.Apellidos || "-"}</td>
                 <td>{usuario.Email || "-"}</td>
                 <td>
-                  <span className={styles.badge}>{usuario.Rol || "Sin rol"}</span>
+                  <span className={styles.badge}>
+                    {usuario.Rol || "Sin rol"}
+                  </span>
                 </td>
                 <td>{new Date(usuario.FechaRegistro).toLocaleDateString()}</td>
               </tr>
@@ -674,9 +764,12 @@ function TrabajadoresTab() {
   const fetchTrabajadores = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=trabajadores`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=trabajadores`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setTrabajadores(data);
@@ -705,11 +798,14 @@ function TrabajadoresTab() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=trabajadores`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=trabajadores`,
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (response.ok) {
         fetchTrabajadores();
@@ -774,10 +870,13 @@ function TrabajadoresTab() {
   const handleDelete = async (id) => {
     if (!confirm("¿Eliminar este trabajador?")) return;
     try {
-      const response = await fetch(`${API_URL}/app/api/admin.php?path=trabajadores/${id}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-      });
+      const response = await fetch(
+        `${API_URL}/app/api/admin.php?path=trabajadores/${id}`,
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
+      );
       if (response.ok) {
         fetchTrabajadores();
       }
@@ -786,7 +885,8 @@ function TrabajadoresTab() {
     }
   };
 
-  if (loading) return <div className={styles.loading}>Cargando trabajadores...</div>;
+  if (loading)
+    return <div className={styles.loading}>Cargando trabajadores...</div>;
 
   return (
     <div className={styles.tabContent}>
@@ -799,7 +899,10 @@ function TrabajadoresTab() {
 
       {showForm && (
         <div className={styles.modal} onClick={() => setShowForm(false)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3>Nuevo Trabajador</h3>
             <form onSubmit={handleSubmit} className={styles.form}>
               <label>
@@ -807,7 +910,9 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -816,7 +921,9 @@ function TrabajadoresTab() {
                 <input
                   type="password"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -825,7 +932,9 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={formData.nombres}
-                  onChange={(e) => setFormData({ ...formData, nombres: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, nombres: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -834,7 +943,9 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={formData.apellidos}
-                  onChange={(e) => setFormData({ ...formData, apellidos: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, apellidos: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -843,7 +954,9 @@ function TrabajadoresTab() {
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -852,7 +965,9 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={formData.telefono}
-                  onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, telefono: e.target.value })
+                  }
                 />
               </label>
               <label>
@@ -860,14 +975,24 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={formData.numeroDocumento}
-                  onChange={(e) => setFormData({ ...formData, numeroDocumento: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      numeroDocumento: e.target.value,
+                    })
+                  }
                 />
               </label>
               <label>
                 Rol:
                 <select
                   value={formData.idRol}
-                  onChange={(e) => setFormData({ ...formData, idRol: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      idRol: parseInt(e.target.value),
+                    })
+                  }
                 >
                   {roles.map((rol) => (
                     <option key={rol.IdRol} value={rol.IdRol}>
@@ -901,7 +1026,10 @@ function TrabajadoresTab() {
             setEditing(null);
           }}
         >
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3>Editar Trabajador</h3>
             <form onSubmit={handleEditSubmit} className={styles.form}>
               <label>
@@ -909,7 +1037,9 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={editing.Username}
-                  onChange={(e) => setEditing({ ...editing, Username: e.target.value })}
+                  onChange={(e) =>
+                    setEditing({ ...editing, Username: e.target.value })
+                  }
                   required
                 />
               </label>
@@ -918,7 +1048,9 @@ function TrabajadoresTab() {
                 <input
                   type="password"
                   value={editing.password || ""}
-                  onChange={(e) => setEditing({ ...editing, password: e.target.value })}
+                  onChange={(e) =>
+                    setEditing({ ...editing, password: e.target.value })
+                  }
                 />
               </label>
               <label>
@@ -926,7 +1058,9 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={editing.Nombres || ""}
-                  onChange={(e) => setEditing({ ...editing, Nombres: e.target.value })}
+                  onChange={(e) =>
+                    setEditing({ ...editing, Nombres: e.target.value })
+                  }
                 />
               </label>
               <label>
@@ -934,7 +1068,9 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={editing.Apellidos || ""}
-                  onChange={(e) => setEditing({ ...editing, Apellidos: e.target.value })}
+                  onChange={(e) =>
+                    setEditing({ ...editing, Apellidos: e.target.value })
+                  }
                 />
               </label>
               <label>
@@ -942,7 +1078,9 @@ function TrabajadoresTab() {
                 <input
                   type="email"
                   value={editing.Email || ""}
-                  onChange={(e) => setEditing({ ...editing, Email: e.target.value })}
+                  onChange={(e) =>
+                    setEditing({ ...editing, Email: e.target.value })
+                  }
                 />
               </label>
               <label>
@@ -950,7 +1088,9 @@ function TrabajadoresTab() {
                 <input
                   type="text"
                   value={editing.Telefono || ""}
-                  onChange={(e) => setEditing({ ...editing, Telefono: e.target.value })}
+                  onChange={(e) =>
+                    setEditing({ ...editing, Telefono: e.target.value })
+                  }
                 />
               </label>
               <div className={styles.formActions}>
@@ -1000,10 +1140,16 @@ function TrabajadoresTab() {
                   <span className={styles.badge}>{trabajador.Rol}</span>
                 </td>
                 <td>
-                  <button className={styles.btnSmall} onClick={() => openEdit(trabajador)}>
+                  <button
+                    className={styles.btnSmall}
+                    onClick={() => openEdit(trabajador)}
+                  >
                     Editar
                   </button>
-                  <button className={styles.btnDanger} onClick={() => handleDelete(trabajador.IdUsuario)}>
+                  <button
+                    className={styles.btnDanger}
+                    onClick={() => handleDelete(trabajador.IdUsuario)}
+                  >
                     Eliminar
                   </button>
                 </td>
@@ -1015,4 +1161,3 @@ function TrabajadoresTab() {
     </div>
   );
 }
-

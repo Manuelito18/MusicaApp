@@ -12,7 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../config/database.php';
 
-function sanitizeString($value) {
+function sanitizeString($value)
+{
     if ($value === null) return '';
     return trim(strip_tags((string)$value));
 }
@@ -145,6 +146,35 @@ try {
         $stmtStock->execute([$pi['cantidad'], $pi['idproducto']]);
     }
 
+    // Registrar pago (básico) y envío asociados al pedido
+    // Mapear método de pago: 'card' -> 1 (Tarjeta), 'mobile'/'yape' -> 2 (Transferencia)
+    $method = sanitizeString($data['payment']['method'] ?? 'card');
+    $methodId = 2; // por defecto transferencia
+    $low = strtolower($method);
+    if ($low === 'card' || $low === 'tarjeta') {
+        $methodId = 1;
+    } elseif ($low === 'mobile' || $low === 'yape' || $low === 'plin') {
+        $methodId = 2;
+    }
+
+    // Estado pago: 2 = Confirmado (según data.sql)
+    $estadoPagoId = 2;
+
+    $stmtPago = $db->prepare("INSERT INTO pago (idpedido, idmetodopago, monto, idestadopago) VALUES (?, ?, ?, ?) RETURNING idpago");
+    $stmtPago->execute([$idPedido, $methodId, $total, $estadoPagoId]);
+    $pagoRow = $stmtPago->fetch(PDO::FETCH_ASSOC);
+    $idPago = (int)($pagoRow['idpago'] ?? 0);
+
+    // Guardar envío: usamos primer distrito por defecto (1) si no se identifica
+    $direccion = sanitizeString($data['address'] ?? '');
+    $distritoId = 1;
+    $estadoEnvioId = 1; // Pendiente
+
+    $stmtEnvio = $db->prepare("INSERT INTO envio (idpedido, direccionentrega, iddistrito, idestadoenvio) VALUES (?, ?, ?, ?) RETURNING idenvio");
+    $stmtEnvio->execute([$idPedido, $direccion, $distritoId, $estadoEnvioId]);
+    $envioRow = $stmtEnvio->fetch(PDO::FETCH_ASSOC);
+    $idEnvio = (int)($envioRow['idenvio'] ?? 0);
+
     // Sincronizar secuencia de producto por si insertamos IDs manuales
     $db->query("SELECT setval(pg_get_serial_sequence('producto','idproducto'), (SELECT COALESCE(MAX(idproducto), 1) FROM producto))");
 
@@ -154,7 +184,9 @@ try {
     echo json_encode([
         "message" => "Pedido creado correctamente",
         "idPedido" => $idPedido,
-        "total" => $total
+        "total" => $total,
+        "idPago" => $idPago,
+        "idEnvio" => $idEnvio
     ]);
 } catch (Exception $e) {
     if (isset($db) && $db instanceof PDO && $db->inTransaction()) {
@@ -163,5 +195,3 @@ try {
     http_response_code(400);
     echo json_encode(["error" => $e->getMessage()]);
 }
-
-

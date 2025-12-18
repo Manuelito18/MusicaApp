@@ -2,9 +2,15 @@ import { useState, useEffect } from "react";
 import styles from "./styles/LoginModal.module.css";
 import { useUser } from "../context/UserContext";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost/WEBS/MusicaApp/";
 
-export default function LoginModal({ isOpen, onClose, mode = "login", setMode }) {
+export default function LoginModal({
+  isOpen,
+  onClose,
+  mode = "login",
+  setMode,
+}) {
   const { login, register } = useUser();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -48,17 +54,22 @@ export default function LoginModal({ isOpen, onClose, mode = "login", setMode })
     try {
       const response = await fetch(`${API_URL}/app/api/health.php`);
       const data = await response.json();
-      
+
       if (data.status === "ok" && data.database === "connected") {
         setDbStatus("connected");
         setError(""); // Asegurar que no haya errores cuando está conectado
       } else {
         setDbStatus("disconnected");
-        setError("No hay conexión a la base de datos. Por favor, verifica la configuración del servidor.");
+        setError(
+          "No hay conexión a la base de datos. Por favor, verifica la configuración del servidor."
+        );
       }
     } catch (error) {
       setDbStatus("disconnected");
-      setError("No se pudo conectar al servidor. Verifica que el backend esté corriendo en " + API_URL);
+      setError(
+        "No se pudo conectar al servidor. Verifica que el backend esté corriendo en " +
+          API_URL
+      );
     }
   };
 
@@ -67,10 +78,12 @@ export default function LoginModal({ isOpen, onClose, mode = "login", setMode })
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     // Verificar conexión antes de intentar login
     if (dbStatus !== "connected") {
-      setError("No hay conexión a la base de datos. Por favor, verifica la configuración.");
+      setError(
+        "No hay conexión a la base de datos. Por favor, verifica la configuración."
+      );
       await checkDatabaseConnection();
       return;
     }
@@ -123,14 +136,18 @@ export default function LoginModal({ isOpen, onClose, mode = "login", setMode })
         <div className={styles.modeTabs}>
           <button
             type="button"
-            className={`${styles.modeTab} ${mode === "login" ? styles.modeActive : ""}`}
+            className={`${styles.modeTab} ${
+              mode === "login" ? styles.modeActive : ""
+            }`}
             onClick={() => setMode && setMode("login")}
           >
             Ingresar
           </button>
           <button
             type="button"
-            className={`${styles.modeTab} ${mode === "register" ? styles.modeActive : ""}`}
+            className={`${styles.modeTab} ${
+              mode === "register" ? styles.modeActive : ""
+            }`}
             onClick={() => setMode && setMode("register")}
           >
             Crear cuenta
@@ -140,17 +157,23 @@ export default function LoginModal({ isOpen, onClose, mode = "login", setMode })
         {/* Indicador de estado de la base de datos */}
         {dbStatus === "checking" && (
           <div className={styles.dbStatus}>
-            <span className={styles.statusChecking}>🔄 Verificando conexión a la base de datos...</span>
+            <span className={styles.statusChecking}>
+              🔄 Verificando conexión a la base de datos...
+            </span>
           </div>
         )}
         {dbStatus === "connected" && (
           <div className={styles.dbStatus}>
-            <span className={styles.statusConnected}>✅ Conexión a la base de datos establecida</span>
+            <span className={styles.statusConnected}>
+              ✅ Conexión a la base de datos establecida
+            </span>
           </div>
         )}
         {dbStatus === "disconnected" && (
           <div className={styles.dbStatus}>
-            <span className={styles.statusDisconnected}>❌ Sin conexión a la base de datos</span>
+            <span className={styles.statusDisconnected}>
+              ❌ Sin conexión a la base de datos
+            </span>
             <button
               type="button"
               className={styles.btnRetry}
@@ -258,8 +281,8 @@ export default function LoginModal({ isOpen, onClose, mode = "login", setMode })
                   ? "Creando cuenta..."
                   : "Iniciando sesión..."
                 : mode === "register"
-                  ? "Crear cuenta"
-                  : "Entrar"}
+                ? "Crear cuenta"
+                : "Entrar"}
             </button>
             <button type="button" className={styles.btnGhost} onClick={onClose}>
               Cancelar

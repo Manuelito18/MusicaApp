@@ -32,14 +32,14 @@ cd ..
 php -S localhost:8000
 ```
 
-El backend estará disponible en: **http://localhost:8000**
+El backend estará disponible en: **http://localhost/WEBS/MusicaApp/**
 
 ### 3. Configurar la URL de la API (Opcional pero recomendado)
 
 Crea un archivo `.env` en la carpeta `client/` con el siguiente contenido:
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=http://localhost/WEBS/MusicaApp/
 ```
 
 **Nota:** Si creas o modificas el archivo `.env`, necesitas reiniciar el servidor de Vite (Ctrl+C y luego `npm run dev` nuevamente).
@@ -47,6 +47,7 @@ VITE_API_URL=http://localhost:8000
 ## 📋 Resumen de Comandos
 
 ### Terminal 1 - Frontend:
+
 ```bash
 cd client
 npm install  # Solo la primera vez
@@ -54,6 +55,7 @@ npm run dev
 ```
 
 ### Terminal 2 - Backend:
+
 ```bash
 # Desde la raíz del proyecto
 php -S localhost:8000
@@ -62,7 +64,7 @@ php -S localhost:8000
 ## ✅ Verificar que todo funciona
 
 1. **Frontend:** Abre http://localhost:5173 en tu navegador
-2. **Backend:** Abre http://localhost:8000 en tu navegador (deberías ver algo o un error 404, pero el servidor está corriendo)
+2. **Backend:** Abre http://localhost/WEBS/MusicaApp/ en tu navegador (deberías ver algo o un error 404, pero el servidor está corriendo)
 
 ## 🔐 Credenciales de Administrador
 
@@ -74,23 +76,26 @@ Para acceder al panel de administración, usa estas credenciales (según la base
 ## 🐛 Solución de Problemas
 
 ### Error: "php: command not found"
+
 - Instala PHP en tu sistema
 - En Linux: `sudo apt install php` o `sudo pacman -S php`
 - Verifica con: `php -v`
 
 ### Error: "npm: command not found"
+
 - Instala Node.js y npm
 - Descarga desde: https://nodejs.org/
 - Verifica con: `npm -v`
 
 ### El frontend no puede conectar con el backend
+
 - Verifica que ambos servidores estén corriendo
-- Verifica que la URL en `.env` sea correcta: `VITE_API_URL=http://localhost:8000`
+- Verifica que la URL en `.env` sea correcta: `VITE_API_URL=http://localhost/WEBS/MusicaApp/`
 - Reinicia ambos servidores
 
 ### Puerto 8000 o 5173 ya está en uso
+
 - Cierra otros programas que usen esos puertos
 - O cambia el puerto:
   - PHP: `php -S localhost:8001` (y actualiza `.env`)
   - Vite: `npm run dev -- --port 5174`
-

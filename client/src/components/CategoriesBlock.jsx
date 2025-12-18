@@ -2,7 +2,8 @@ import styles from "./styles/CategoriesBlock.module.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost/WEBS/MusicaApp/";
 
 export default function CategoriesBlock() {
   const navigate = useNavigate();

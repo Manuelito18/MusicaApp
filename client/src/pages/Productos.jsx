@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import CardProduct from "../components/CardProduct";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost/WEBS/MusicaApp/";
 
 export default function Productos() {
   const [busqueda, setBusqueda] = useState("");
@@ -87,7 +88,9 @@ export default function Productos() {
       <h1 className={styles.titulo}>Nuestros Productos</h1>
       <div className={styles.categoriasNav}>
         <button
-          className={`${styles.catBtn} ${!categoriaSeleccionada ? styles.active : ""}`}
+          className={`${styles.catBtn} ${
+            !categoriaSeleccionada ? styles.active : ""
+          }`}
           onClick={() => {
             setCategoriaSeleccionada(null);
             navigate(`/productos`);
@@ -135,11 +138,11 @@ export default function Productos() {
       {loading ? (
         <div className={styles.empty}>Cargando productos...</div>
       ) : (
-      <div className={styles.gridFlat}>
-        {productosFiltrados.map((p) => (
-          <CardProduct key={p.id} producto={p} />
-        ))}
-      </div>
+        <div className={styles.gridFlat}>
+          {productosFiltrados.map((p) => (
+            <CardProduct key={p.id} producto={p} />
+          ))}
+        </div>
       )}
     </div>
   );

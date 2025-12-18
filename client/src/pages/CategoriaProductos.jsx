@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import CardProduct from "../components/CardProduct";
 import { useEffect, useMemo, useState } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost/WEBS/MusicaApp/";
 
 export default function CategoriaProductos() {
   const { categoriaId } = useParams();
@@ -28,12 +29,16 @@ export default function CategoriaProductos() {
       const resCat = await fetch(`${API_URL}/app/api/categorias.php`);
       const cats = await resCat.json();
       if (resCat.ok) {
-        const found = (cats || []).find((c) => String(c.IdCategoria) === String(categoriaId));
+        const found = (cats || []).find(
+          (c) => String(c.IdCategoria) === String(categoriaId)
+        );
         setCategoriaNombre(found?.Nombre || categoriaId);
       }
 
       // Productos por categoría
-      const res = await fetch(`${API_URL}/app/api/productos.php?categoriaId=${categoriaId}`);
+      const res = await fetch(
+        `${API_URL}/app/api/productos.php?categoriaId=${categoriaId}`
+      );
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "No se pudieron cargar productos.");
@@ -102,10 +107,7 @@ export default function CategoriaProductos() {
       ) : (
         <div className={styles.grid}>
           {productosFiltrados.map((prod) => (
-            <CardProduct
-              key={prod.id}
-              producto={prod}
-            />
+            <CardProduct key={prod.id} producto={prod} />
           ))}
         </div>
       )}

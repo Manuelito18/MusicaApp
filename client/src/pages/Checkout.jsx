@@ -9,7 +9,8 @@ import ScrollToTop from "../components/specials/ScrollToTop";
 import { useEffect } from "react";
 import { useUser } from "../context/UserContext";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost/WEBS/MusicaApp/";
 
 export default function Checkout() {
   const { cartItems, clearCart } = useCart();
