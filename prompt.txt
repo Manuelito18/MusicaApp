@@ -146,3 +146,10 @@ Estructura del proyecto
 ├── LICENSE
 ├── prompt.txt
 └── README.md
+
+
+La vista (react)
+Conexion de la vista 
+Un controlador
+Un modelo
+autentificacion y creacion de cuentas y pagos

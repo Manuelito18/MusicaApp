@@ -101,27 +101,6 @@ class UsuarioModel {
         return $stmt->execute([$idRol, $id]);
     }
 
-    public static function blockUser($id, $blocked = true) {
-        $db = Database::connect();
-        
-        // Opción 1: Si existe un rol "Bloqueado" (ID 5 por ejemplo, ajustar según tu BD)
-        // Buscar si existe rol "Bloqueado"
-        $sqlCheck = "SELECT idrol AS \"IdRol\" FROM rol WHERE nombre = 'Bloqueado'";
-        $stmtCheck = $db->query($sqlCheck);
-        $rolBloqueado = $stmtCheck->fetch(PDO::FETCH_ASSOC);
-        
-        if ($rolBloqueado && $blocked) {
-            // Asignar rol Bloqueado
-            return self::updateRole($id, $rolBloqueado['IdRol']);
-        } else if (!$blocked) {
-            // Desbloquear: asignar rol Cliente (ID 3 según data.sql)
-            return self::updateRole($id, 3);
-        }
-        
-        // Si no existe rol Bloqueado, retornar false
-        // Nota: Para implementación completa, agregar campo "Activo" BOOLEAN a tabla Usuario
-        return false;
-    }
 
     public static function updateUserData($id, $idUserData) {
         $db = Database::connect();
